@@ -4,6 +4,8 @@ public class Mushroom : MonoBehaviour
 {
     [SerializeField] private float bounceForce = 20f; // Сила отталкивания
     [SerializeField] private Animator animator; // Анимация пружинистого эффекта
+    [SerializeField] private AudioClip bounceSound; // Звуковой клип для отталкивания
+    [SerializeField] private AudioSource audioSource; // Источник звука
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -20,6 +22,12 @@ public class Mushroom : MonoBehaviour
                 if (animator != null)
                 {
                     animator.SetTrigger("Bounce");
+                }
+
+                // Воспроизводим звук
+                if (audioSource != null && bounceSound != null)
+                {
+                    audioSource.PlayOneShot(bounceSound);
                 }
             }
         }

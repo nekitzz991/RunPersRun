@@ -22,7 +22,7 @@ public class LevelDestroy : MonoBehaviour
 
     private void DeleteFinalParts()
     {
-        if(transform.position.x < player.transform.position.x - 30)
+        if(transform.position.x < player.transform.position.x - 100)
         {
             Destroy(gameObject);
         }
