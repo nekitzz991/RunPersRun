@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 8930244863162314191}
   - component: {fileID: 6334976759215848935}
   m_Layer: 0
-  m_Name: Poop
+  m_Name: Poop 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -84,7 +84,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 3ced33e10c34144a09b8adc1dde5741f, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.9622642, g: 0.9475505, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -144,7 +144,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemType: 1
   boneVariant: 0
-  poopVariant: 0
+  poopVariant: 1
 --- !u!114 &8419674442064772203
 MonoBehaviour:
   m_ObjectHideFlags: 0
