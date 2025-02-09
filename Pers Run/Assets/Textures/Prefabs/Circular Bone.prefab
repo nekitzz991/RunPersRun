@@ -34,7 +34,7 @@ Transform:
   m_GameObject: {fileID: 7148085646364732584}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.38999906, y: -2.12, z: 0}
+  m_LocalPosition: {x: 3.9599957, y: -2.12, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -226,18 +226,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2e5a108c4508470db106b8fe5eae577, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _frameRate: 10
-  _playOnStart: 0
+  _frameRate: 4
+  _playOnStart: 1
   _onComplete:
     m_PersistentCalls:
       m_Calls: []
   _clips:
+  - _name: Idle
+    _sprites:
+    - {fileID: 21300000, guid: 5bb71c1517e914ecb87d0099c4daf065, type: 3}
+    - {fileID: 21300000, guid: 0dd004f335b004ceaaa9de5f8e9c3af4, type: 3}
+    - {fileID: 21300000, guid: 5bb71c1517e914ecb87d0099c4daf065, type: 3}
+    - {fileID: 21300000, guid: 0dd004f335b004ceaaa9de5f8e9c3af4, type: 3}
+    _loop: 1
+    _allowNextClip: 0
+    _onComplete:
+      m_PersistentCalls:
+        m_Calls: []
   - _name: Destroy
     _sprites:
-    - {fileID: 1692619601, guid: d891f2cf1525e4066a0cc98928f65e27, type: 3}
-    - {fileID: -52500095, guid: d891f2cf1525e4066a0cc98928f65e27, type: 3}
-    - {fileID: -327981575, guid: d891f2cf1525e4066a0cc98928f65e27, type: 3}
-    - {fileID: 2012133937, guid: d891f2cf1525e4066a0cc98928f65e27, type: 3}
+    - {fileID: 21300000, guid: 8a302d6c6601f491cbf0bbfdcde119d5, type: 3}
+    - {fileID: 21300000, guid: a86376d5d432b4c42a971989fce4d790, type: 3}
+    - {fileID: 21300000, guid: 739a96991f53a429799d87d5ea02436c, type: 3}
+    - {fileID: 21300000, guid: fbe0b4b0d909645b3b2ee4e3e3618fe7, type: 3}
     _loop: 0
     _allowNextClip: 0
     _onComplete:

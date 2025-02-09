@@ -176,28 +176,32 @@ public class GameManager : MonoBehaviour
     }
 
     public void Revive()
+{
+    int reviveCost = Mathf.Min(reviveCount + 1, maxReviveCost);
+    if (availableHearts >= reviveCost)
     {
-        int reviveCost = Mathf.Min(reviveCount + 1, maxReviveCost);
-        if (availableHearts >= reviveCost)
-        {
-            availableHearts -= reviveCost;
-            reviveCount++;
+        availableHearts -= reviveCost;
+        reviveCount++;
 
-            gameOverPanel.SetActive(false);
-            RevivePlayer();
-            UpdateHeartUI();
-        }
-        else
-        {
-            // Если недостаточно сердец – можно показать рекламу
-            ShowAdForHeart();
-        }
+        gameOverPanel.SetActive(false);
+        isGameOver = false;
+
+        if (gameOverMusicSource != null && gameOverMusicSource.isPlaying)
+            gameOverMusicSource.Stop();
+
+        if (musicSource != null && !isMusicMuted)
+            musicSource.Play();
+
+        RevivePlayer();
+        UpdateHeartUI();
     }
+    else
+    {
+        ShowAdForHeart();
+    }
+}
 
-    /// <summary>
-    /// Ищет все объекты с тегом "RespawnPoint" и возвращает тот, который находится дальше (например, по оси X).
-    /// При необходимости логику выбора можно изменить.
-    /// </summary>
+
     private Transform GetLastRespawnPoint()
     {
         GameObject[] respawnPoints = GameObject.FindGameObjectsWithTag("RespawnPoint");

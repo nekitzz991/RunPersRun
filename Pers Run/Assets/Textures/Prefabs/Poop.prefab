@@ -220,12 +220,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7148085646364732584}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c2e5a108c4508470db106b8fe5eae577, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _frameRate: 10
+  _frameRate: 4
   _playOnStart: 1
   _onComplete:
     m_PersistentCalls:
@@ -233,10 +233,10 @@ MonoBehaviour:
   _clips:
   - _name: Idle
     _sprites:
-    - {fileID: -2322180950842035098, guid: d891f2cf1525e4066a0cc98928f65e27, type: 3}
-    - {fileID: -4893972260818282012, guid: d891f2cf1525e4066a0cc98928f65e27, type: 3}
-    - {fileID: -6323751108524238166, guid: d891f2cf1525e4066a0cc98928f65e27, type: 3}
-    - {fileID: 2722280177590742205, guid: d891f2cf1525e4066a0cc98928f65e27, type: 3}
+    - {fileID: 21300000, guid: 3ced33e10c34144a09b8adc1dde5741f, type: 3}
+    - {fileID: 21300000, guid: 4d3cb5f45e89c41fbaecdae42489d78c, type: 3}
+    - {fileID: 21300000, guid: 3ced33e10c34144a09b8adc1dde5741f, type: 3}
+    - {fileID: 21300000, guid: 4d3cb5f45e89c41fbaecdae42489d78c, type: 3}
     _loop: 1
     _allowNextClip: 0
     _onComplete:
@@ -244,10 +244,10 @@ MonoBehaviour:
         m_Calls: []
   - _name: Destroy
     _sprites:
-    - {fileID: 1692619601, guid: d891f2cf1525e4066a0cc98928f65e27, type: 3}
-    - {fileID: -52500095, guid: d891f2cf1525e4066a0cc98928f65e27, type: 3}
-    - {fileID: -327981575, guid: d891f2cf1525e4066a0cc98928f65e27, type: 3}
-    - {fileID: 2012133937, guid: d891f2cf1525e4066a0cc98928f65e27, type: 3}
+    - {fileID: 21300000, guid: 820afac0c0f774fd8bf566e9e0692a58, type: 3}
+    - {fileID: 21300000, guid: d38a624627aca4b31bd9275dd0fcfbc2, type: 3}
+    - {fileID: 21300000, guid: 9ca300738db5d4861a9ef11be3a12fc8, type: 3}
+    - {fileID: 21300000, guid: 64e1786880333495295bbe1144c8905f, type: 3}
     _loop: 0
     _allowNextClip: 0
     _onComplete:

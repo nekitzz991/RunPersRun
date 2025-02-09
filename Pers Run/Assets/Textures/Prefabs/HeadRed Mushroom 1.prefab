@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5656167024202447107}
   - component: {fileID: 6147512504258187015}
   - component: {fileID: 7813543469247744875}
+  - component: {fileID: 3164626382890203384}
   m_Layer: 0
   m_Name: HeadRed Mushroom 1
   m_TagString: Untagged
@@ -149,7 +150,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bounceForce: 20
-  animator: {fileID: 0}
+  animator: {fileID: 3164626382890203384}
   bounceSound: {fileID: 8300000, guid: 30849f0b2e90b4559a9daff966972a2b, type: 3}
   audioSource: {fileID: 7813543469247744875}
 --- !u!82 &7813543469247744875
@@ -249,3 +250,25 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!95 &3164626382890203384
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 162891103791305142}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 382e58c73010940b3bc545ab2c11ed46, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
