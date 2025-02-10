@@ -185,13 +185,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1302c3fad16354628932688953c92bfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 4
-  jumpForce: 11
+  speed: 5
+  jumpForce: 12
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
   groundCheck: {fileID: 3434229061170826925}
   groundCheckRadius: 0.2
+  jumpSound: {fileID: 8300000, guid: e6c6bfa0b284d4e409cd1de89ae0ea32, type: 3}
 --- !u!58 &865693123603207172
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -244,3 +245,4 @@ MonoBehaviour:
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 64
+  deathSound: {fileID: 8300000, guid: 5dd9f3dffa8054b8182ad1ca00011ed0, type: 3}

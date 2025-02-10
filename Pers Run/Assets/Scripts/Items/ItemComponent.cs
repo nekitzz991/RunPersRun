@@ -9,6 +9,9 @@ public class ItemComponent : MonoBehaviour
     [SerializeField] private ItemType itemType;
     [SerializeField] private BoneType boneVariant;
     [SerializeField] private PoopType poopVariant;
+    
+    [SerializeField] private AudioClip pickupSound;
+
     private int scoreValue;
     
     public ItemType Type => itemType;
@@ -29,6 +32,14 @@ public class ItemComponent : MonoBehaviour
             case ItemType.Poop:
                 scoreValue = (poopVariant == PoopType.BigPoop) ? -20 : -10;
                 break;
+        }
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Player"))
+        {
+            AudioManager.Instance.PlaySFXSound(pickupSound);
+            
         }
     }
 }

@@ -152,7 +152,7 @@ MonoBehaviour:
   bounceForce: 20
   animator: {fileID: 3164626382890203384}
   bounceSound: {fileID: 8300000, guid: 30849f0b2e90b4559a9daff966972a2b, type: 3}
-  audioSource: {fileID: 7813543469247744875}
+  audioSource: {fileID: 0}
 --- !u!82 &7813543469247744875
 AudioSource:
   m_ObjectHideFlags: 0

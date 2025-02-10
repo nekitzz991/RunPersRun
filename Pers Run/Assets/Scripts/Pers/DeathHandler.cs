@@ -4,6 +4,7 @@ public class DeathHandler : MonoBehaviour
 {
     public Transform fallCheck; // Граница, ниже которой Перс умирает
     public LayerMask obstacleLayer; // Слой всех препятствий
+    public AudioClip deathSound;
 
     private void Update()
     {
@@ -20,12 +21,14 @@ public class DeathHandler : MonoBehaviour
         if (((1 << collision.gameObject.layer) & obstacleLayer) != 0)
         {
             Die();
+            
         }
     }
 
     private void Die()
     {
         GameManager.Instance.GameOver();
+        AudioManager.Instance.PlaySFXSound(deathSound);
         gameObject.SetActive(false); // Выключаем Перса
     }
 }
