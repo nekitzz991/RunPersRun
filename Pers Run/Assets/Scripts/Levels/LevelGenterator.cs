@@ -4,24 +4,23 @@ using UnityEngine;
 
 public class LevelGenerator : MonoBehaviour
 {
-    // Расстояние до конца уровня, при котором генерируется новая часть
+    [Header("Параметры генерации")]
     [SerializeField] private float playerDistanceSpawnLevelPart = 200f;
-    
-    // Количество частей уровня, которые создаются в начале игры
     [SerializeField] private int startingSpawnLevelParts = 3;
     
-    // Стартовая зона уровня, содержащая точку окончания ("EndPoint")
-    [SerializeField] private Transform startZone;
-    
-    // Список префабов частей уровня
+    [Header("Ссылки на объекты сцены")]
+    [SerializeField] private Transform startZone; // В объекте должна быть дочерняя точка "EndPoint"
     [SerializeField] private List<Transform> levelPartPrefabs;
 
-    private PersRunner player;
+    private PersRunner player;  // Компонент игрока
     private Vector3 lastEndPosition;
+    private LevelPartPool levelPartPool;
+    
+    // Переменная для хранения индекса последнего выбранного префаба
+    private int lastPrefabIndex = -1;
 
     private void Awake()
     {
-        // Проверка обязательных ссылок
         if (startZone == null)
         {
             Debug.LogError("StartZone не задана в инспекторе!");
@@ -34,7 +33,6 @@ public class LevelGenerator : MonoBehaviour
             return;
         }
 
-        // Поиск игрока
         player = FindObjectOfType<PersRunner>();
         if (player == null)
         {
@@ -42,10 +40,22 @@ public class LevelGenerator : MonoBehaviour
             return;
         }
 
-        // Получение конечной точки стартовой зоны
-        lastEndPosition = startZone.Find("EndPoint").position;
+        Transform endPoint = startZone.Find("EndPoint");
+        if (endPoint == null)
+        {
+            Debug.LogError("В StartZone не найден объект с именем 'EndPoint'!");
+            return;
+        }
+        lastEndPosition = endPoint.position;
 
-        // Генерация начальных частей уровня
+        levelPartPool = FindObjectOfType<LevelPartPool>();
+        if (levelPartPool == null)
+        {
+            Debug.LogError("LevelPartPool не найден на сцене!");
+            return;
+        }
+
+        // Генерация стартовых частей уровня
         for (int i = 0; i < startingSpawnLevelParts; i++)
         {
             SpawnLevelPart();
@@ -54,34 +64,53 @@ public class LevelGenerator : MonoBehaviour
 
     private void Start() 
     {
-        // Запуск корутины для проверки условий спауна новых частей уровня
         StartCoroutine(CheckSpawnCondition());
     }
 
     private IEnumerator CheckSpawnCondition()
     {
-        // В цикле проверяем расстояние между игроком и концом последней части уровня
         while (true)
         {
             if (Vector3.Distance(player.transform.position, lastEndPosition) < playerDistanceSpawnLevelPart)
             {
                 SpawnLevelPart();
             }
-            // Проверяем условие 5 раз в секунду
             yield return new WaitForSeconds(0.2f);
         }
     }
 
     private void SpawnLevelPart()
     {
-        // Выбор случайного префаба из списка
-        int randomIndex = Random.Range(0, levelPartPrefabs.Count);
+        int randomIndex = 0;
+        // Если в списке больше одного префаба, выбираем случайный индекс, не равный последнему выбранному
+        if (levelPartPrefabs.Count > 1)
+        {
+            do
+            {
+                randomIndex = Random.Range(0, levelPartPrefabs.Count);
+            }
+            while (randomIndex == lastPrefabIndex);
+        }
+        else
+        {
+            randomIndex = 0;
+        }
+        lastPrefabIndex = randomIndex;
+
         Transform chosenLevelPart = levelPartPrefabs[randomIndex];
 
-        // Создание новой части уровня в позиции последней конечной точки
-        Transform newLevelPart = Instantiate(chosenLevelPart, lastEndPosition, Quaternion.identity);
-        
-        // Используем метод Find для поиска конечной точки в новой части уровня (без дополнительных проверок)
-        lastEndPosition = newLevelPart.Find("EndPoint").position;
+        // Получаем часть уровня из пула
+        Transform newLevelPart = levelPartPool.GetLevelPart(chosenLevelPart, lastEndPosition, Quaternion.identity);
+
+        // Находим дочерний объект "EndPoint" в сгенерированной части
+        Transform newEndPoint = newLevelPart.Find("EndPoint");
+        if (newEndPoint != null)
+        {
+            lastEndPosition = newEndPoint.position;
+        }
+        else
+        {
+            Debug.LogWarning("В сгенерированной части уровня не найден 'EndPoint'!");
+        }
     }
 }

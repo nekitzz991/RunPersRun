@@ -1,30 +1,47 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class LevelDestroy : MonoBehaviour
 {
-    private LevelGenerator levelGenterator;
     private PersRunner player;
+    private LevelPartPool levelPartPool;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        levelGenterator = FindObjectOfType<LevelGenerator>();
+        // Поиск игрока
         player = FindObjectOfType<PersRunner>();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        DeleteFinalParts();
-    }
-
-    private void DeleteFinalParts()
-    {
-        if(transform.position.x < player.transform.position.x - 100)
+        if (player == null)
         {
-            Destroy(gameObject);
+            Debug.LogError("Компонент PersRunner не найден на сцене!");
+        }
+
+        // Поиск менеджера пула
+        levelPartPool = FindObjectOfType<LevelPartPool>();
+        if (levelPartPool == null)
+        {
+            Debug.LogError("LevelPartPool не найден на сцене!");
+        }
+    }
+
+    private void Update()
+    {
+        CheckAndReturnToPool();
+    }
+
+    // Если объект находится слишком далеко позади игрока – возвращаем его в пул
+    private void CheckAndReturnToPool()
+    {
+        if (transform.position.x < player.transform.position.x - 100)
+        {
+            LevelPart levelPart = GetComponent<LevelPart>();
+            if (levelPart != null && levelPartPool != null)
+            {
+                levelPartPool.ReturnToPool(transform, levelPart.originalPrefab);
+            }
+            else
+            {
+                // Если вдруг нет LevelPart, то уничтожаем (fallback)
+                Destroy(gameObject);
+            }
         }
     }
 }
