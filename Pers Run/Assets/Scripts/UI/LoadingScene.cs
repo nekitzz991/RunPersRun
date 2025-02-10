@@ -65,6 +65,7 @@ public class LoadingScene : MonoBehaviour
                 if (textAnimator != null)
                 {
                     textAnimator.enabled = false;
+                    
                 }
 
                 if (Input.GetMouseButtonDown(0)) 

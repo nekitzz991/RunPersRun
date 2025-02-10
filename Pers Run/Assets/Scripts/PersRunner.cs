@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class PersRunner : MonoBehaviour
 {
@@ -29,26 +30,27 @@ public class PersRunner : MonoBehaviour
     }
 
     void Update()
+{
+    if (isDead) return;
+
+    rb.linearVelocity = new Vector2(speed, rb.linearVelocity.y);
+    isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
+
+    // Проверяем, что клик не на UI
+    if (Input.GetMouseButtonDown(0) && isGrounded && !EventSystem.current.IsPointerOverGameObject())
     {
-        if (isDead) return; // Если умер, не выполняем обновление
-
-        rb.linearVelocity = new Vector2(speed, rb.linearVelocity.y);
-        isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
-
-        if (Input.GetMouseButtonDown(0) && isGrounded)
-        {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-            AudioManager.Instance.PlaySFXSound(jumpSound);
-        }
-
-        animator.SetBool("IsRunning", rb.linearVelocity.x > 0);
-        animator.SetBool("IsJumping", !isGrounded);
-
-        if (transform.position.y < fallCheck.position.y)
-        {
-            Die();
-        }
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+        AudioManager.Instance.PlaySFXSound(jumpSound);
     }
+
+    animator.SetBool("IsRunning", rb.linearVelocity.x > 0);
+    animator.SetBool("IsJumping", !isGrounded);
+
+    if (transform.position.y < fallCheck.position.y)
+    {
+        Die();
+    }
+}
 
     void OnCollisionEnter2D(Collision2D collision)
     {
@@ -80,11 +82,16 @@ public class PersRunner : MonoBehaviour
     }
 public void Revive()
 {
-    isDead = false; // Сбрасываем статус смерти
-    animator.SetTrigger("Revive"); // Анимация возрождения (убедись, что есть триггер "Revive" в Animator)
-    animator.SetBool("IsRunning", true); // Перс снова бежит
+    isDead = false;
+    animator.ResetTrigger("Die");
+    animator.ResetTrigger("Revive");
+    animator.SetTrigger("Revive");
+    animator.SetBool("IsRunning", true);
     animator.SetBool("IsJumping", false);
 }
+
+
+
 
 
     

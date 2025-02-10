@@ -203,14 +203,22 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
-    public void ExitGame()
+  public void ExitGame()
+{
+    Time.timeScale = 0f; // Полностью останавливаем игру
+    isGameOver = true; // Флаг, что игра окончена
+    Score = 0;
+    currentDistance = 0f;
+
+    // Показываем стартовый экран
+    MenuManager menuManager = FindObjectOfType<MenuManager>();
+    if (menuManager != null)
     {
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-        Application.Quit();
-#endif
+        menuManager.ShowStartScreen();
     }
+}
+
+
     #endregion
 
     #region Pause Management
@@ -257,28 +265,39 @@ public class GameManager : MonoBehaviour
             ShowAdForHeart();
         }
     }
-    private Transform GetLastRespawnPoint()
+ private Transform GetLastRespawnPoint()
+{
+    if (respawnPoints != null && respawnPoints.Length > 0)
     {
-        if (respawnPoints != null && respawnPoints.Length > 0)
+        Transform lastPoint = null;
+        foreach (Transform point in respawnPoints)
         {
-            Transform lastPoint = respawnPoints[0];
-            foreach (Transform point in respawnPoints)
-                if (point.position.x > lastPoint.position.x)
-                    lastPoint = point;
+            // Пропускаем уничтожённые объекты
+            if (point == null)
+                continue;
+
+            if (lastPoint == null || point.position.x > lastPoint.position.x)
+            {
+                lastPoint = point;
+            }
+        }
+        if (lastPoint != null)
             return lastPoint;
-        }
-        else
-        {
-            GameObject[] points = GameObject.FindGameObjectsWithTag("RespawnPoint");
-            if (points.Length == 0)
-                return null;
-            Transform lastFound = points[0].transform;
-            foreach (GameObject point in points)
-                if (point.transform.position.x > lastFound.position.x)
-                    lastFound = point.transform;
-            return lastFound;
-        }
     }
+    
+    // Если массив respawnPoints пуст или все объекты уничтожены, ищем заново
+    GameObject[] points = GameObject.FindGameObjectsWithTag("RespawnPoint");
+    if (points.Length == 0)
+        return null;
+    Transform lastFound = points[0].transform;
+    foreach (GameObject point in points)
+    {
+        if (point.transform.position.x > lastFound.position.x)
+            lastFound = point.transform;
+    }
+    return lastFound;
+}
+
    private void RevivePlayer()
 {
     if (playerInstance == null)
