@@ -59,19 +59,16 @@ public class LoadingScene : MonoBehaviour
 
             if (operation.progress >= 0.9f)
             {
-                textLoading.text = "Tap to Continue";
+                
 
                 // Отключаем анимацию текста
                 if (textAnimator != null)
                 {
                     textAnimator.enabled = false;
-                    
-                }
-
-                if (Input.GetMouseButtonDown(0)) 
-                {
                     operation.allowSceneActivation = true;
                 }
+
+               
             }
             yield return null;
         }

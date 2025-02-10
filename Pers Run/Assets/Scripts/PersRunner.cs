@@ -15,8 +15,8 @@ public class PersRunner : MonoBehaviour
     public AudioClip deathSound;
 
     [Header("Death Settings")]
-    public Transform fallCheck;      // Точка, ниже которой персонаж считается упавшим
-    public LayerMask obstacleLayer;  // Слой препятствий, при столкновении с которыми персонаж умирает
+    public Transform fallCheck;      
+    public LayerMask obstacleLayer;  
 
     private Rigidbody2D rb;
     private Animator animator;
@@ -36,11 +36,10 @@ public class PersRunner : MonoBehaviour
     rb.linearVelocity = new Vector2(speed, rb.linearVelocity.y);
     isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
 
-    // Проверяем, что клик не на UI
     if (Input.GetMouseButtonDown(0) && isGrounded && !EventSystem.current.IsPointerOverGameObject())
     {
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-        AudioManager.Instance.PlaySFXSound(jumpSound);
+        AudioManager.Instance.PlaySFXSound(jumpSound, 0.2f);
     }
 
     animator.SetBool("IsRunning", rb.linearVelocity.x > 0);
@@ -71,13 +70,13 @@ public class PersRunner : MonoBehaviour
 
     private void Die()
     {
-        if (isDead) return; // Чтобы метод не выполнялся дважды
+        if (isDead) return; 
 
         isDead = true;
         GameManager.Instance.GameOver();
         AudioManager.Instance.PlaySFXSound(deathSound);
 
-        animator.SetTrigger("Die"); // Запуск анимации смерти
+        animator.SetTrigger("Die"); 
 
     }
 public void Revive()

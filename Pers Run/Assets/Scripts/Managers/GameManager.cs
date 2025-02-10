@@ -203,20 +203,12 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
-  public void ExitGame()
+ public void ExitGame()
 {
-    Time.timeScale = 0f; // Полностью останавливаем игру
-    isGameOver = true; // Флаг, что игра окончена
-    Score = 0;
-    currentDistance = 0f;
-
-    // Показываем стартовый экран
-    MenuManager menuManager = FindObjectOfType<MenuManager>();
-    if (menuManager != null)
-    {
-        menuManager.ShowStartScreen();
-    }
+    Time.timeScale = 1f; 
+    SceneManager.LoadScene("LoadingScene"); 
 }
+
 
 
     #endregion

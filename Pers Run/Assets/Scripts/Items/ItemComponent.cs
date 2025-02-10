@@ -38,7 +38,7 @@ public class ItemComponent : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            AudioManager.Instance.PlaySFXSound(pickupSound);
+            AudioManager.Instance.PlaySFXSound(pickupSound,4f);
             
         }
     }

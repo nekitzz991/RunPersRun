@@ -75,13 +75,11 @@ public class AudioManager : MonoBehaviour
             sfxSource.PlayOneShot(buttonClickSound);
     }
 
-    public void PlaySFXSound(AudioClip clip)
+   public void PlaySFXSound(AudioClip clip, float volume = 1f)
 {
-    if (!isSFXMuted && clip != null && sfxSource != null)
-    {
-        sfxSource.PlayOneShot(clip);
-    }
+    sfxSource.PlayOneShot(clip, volume);
 }
+
 
 
     /// <summary>
