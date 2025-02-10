@@ -7,12 +7,17 @@ public class LoadingScene : MonoBehaviour
 { 
     public Image loadingCircleBar; 
     public Text textLoading; 
-    public GameObject generalButton; 
-
+    public GameObject generalButton;
+    
+    private Animator loadingCircleAnimator;
+    private Animator textAnimator;
     private bool isLoading = false;
 
     private void Start()
     {
+        loadingCircleAnimator = loadingCircleBar.GetComponent<Animator>(); // Аниматор круга загрузки
+        textAnimator = textLoading.GetComponent<Animator>(); // Аниматор текста
+
         loadingCircleBar.gameObject.SetActive(false);
         textLoading.text = "Press to Play";
         generalButton.SetActive(true);
@@ -25,6 +30,16 @@ public class LoadingScene : MonoBehaviour
             isLoading = true;
             loadingCircleBar.gameObject.SetActive(true);
             generalButton.gameObject.SetActive(false);
+
+            if (loadingCircleAnimator != null)
+            {
+                loadingCircleAnimator.enabled = true; // Включаем анимацию круга
+            }
+            if (textAnimator != null)
+            {
+                textAnimator.enabled = true; // Включаем анимацию текста
+            }
+
             StartCoroutine(LoadSceneAsync(sceneId));
         }
     }
@@ -34,18 +49,25 @@ public class LoadingScene : MonoBehaviour
         textLoading.text = "Loading...";
 
         AsyncOperation operation = SceneManager.LoadSceneAsync(sceneId);
-        operation.allowSceneActivation = false; // Ждём загрузки
+        operation.allowSceneActivation = false;
 
         while (!operation.isDone)
         {
             float progress = Mathf.Clamp01(operation.progress / 0.9f);
             textLoading.text = $"Loading {Mathf.RoundToInt(progress * 100)}%";
-            loadingCircleBar.transform.Rotate(0, 0, -200 * Time.deltaTime); // Вращение индикатора
+            loadingCircleBar.transform.Rotate(0, 0, -200 * Time.deltaTime);
 
-            if (operation.progress >= 0.9f) 
+            if (operation.progress >= 0.9f)
             {
                 textLoading.text = "Tap to Continue";
-                if (Input.GetMouseButtonDown(0)) // Ожидание клика для завершения
+
+                // Отключаем анимацию текста
+                if (textAnimator != null)
+                {
+                    textAnimator.enabled = false;
+                }
+
+                if (Input.GetMouseButtonDown(0)) 
                 {
                     operation.allowSceneActivation = true;
                 }

@@ -279,21 +279,26 @@ public class GameManager : MonoBehaviour
             return lastFound;
         }
     }
-    private void RevivePlayer()
+   private void RevivePlayer()
+{
+    if (playerInstance == null)
     {
+        playerInstance = FindObjectOfType<PersRunner>();
         if (playerInstance == null)
-        {
-            playerInstance = FindObjectOfType<PersRunner>();
-            if (playerInstance == null)
-                return;
-        }
-        Transform lastRespawnPoint = GetLastRespawnPoint();
-        if (lastRespawnPoint != null)
-            playerInstance.transform.position = lastRespawnPoint.position;
-        else
-            playerInstance.transform.position = Vector3.zero;
-        playerInstance.gameObject.SetActive(true);
+            return;
     }
+
+    Transform lastRespawnPoint = GetLastRespawnPoint();
+    if (lastRespawnPoint != null)
+        playerInstance.transform.position = lastRespawnPoint.position;
+    else
+        playerInstance.transform.position = Vector3.zero;
+
+    playerInstance.gameObject.SetActive(true);
+    playerInstance.Revive(); 
+}
+
+
     private void ShowAdForHeart()
     {
         Debug.Log("Показ рекламы для получения сердца");

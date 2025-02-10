@@ -20,6 +20,7 @@ public class PersRunner : MonoBehaviour
     private Rigidbody2D rb;
     private Animator animator;
     private bool isGrounded;
+    private bool isDead = false;
 
     void Start()
     {
@@ -29,8 +30,9 @@ public class PersRunner : MonoBehaviour
 
     void Update()
     {
-        rb.linearVelocity = new Vector2(speed, rb.linearVelocity.y);
+        if (isDead) return; // Если умер, не выполняем обновление
 
+        rb.linearVelocity = new Vector2(speed, rb.linearVelocity.y);
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
 
         if (Input.GetMouseButtonDown(0) && isGrounded)
@@ -67,8 +69,23 @@ public class PersRunner : MonoBehaviour
 
     private void Die()
     {
+        if (isDead) return; // Чтобы метод не выполнялся дважды
+
+        isDead = true;
         GameManager.Instance.GameOver();
         AudioManager.Instance.PlaySFXSound(deathSound);
-        gameObject.SetActive(false);
+
+        animator.SetTrigger("Die"); // Запуск анимации смерти
+
     }
+public void Revive()
+{
+    isDead = false; // Сбрасываем статус смерти
+    animator.SetTrigger("Revive"); // Анимация возрождения (убедись, что есть триггер "Revive" в Animator)
+    animator.SetBool("IsRunning", true); // Перс снова бежит
+    animator.SetBool("IsJumping", false);
+}
+
+
+    
 }
