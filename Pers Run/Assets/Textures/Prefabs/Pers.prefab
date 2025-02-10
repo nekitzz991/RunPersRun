@@ -45,7 +45,6 @@ GameObject:
   - component: {fileID: 3329204572639205180}
   - component: {fileID: 1260831654896527804}
   - component: {fileID: 865693123603207172}
-  - component: {fileID: 5131681203431048334}
   m_Layer: 0
   m_Name: Pers
   m_TagString: Player
@@ -193,6 +192,11 @@ MonoBehaviour:
   groundCheck: {fileID: 3434229061170826925}
   groundCheckRadius: 0.2
   jumpSound: {fileID: 8300000, guid: e6c6bfa0b284d4e409cd1de89ae0ea32, type: 3}
+  deathSound: {fileID: 8300000, guid: 5dd9f3dffa8054b8182ad1ca00011ed0, type: 3}
+  fallCheck: {fileID: 0}
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!58 &865693123603207172
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -229,20 +233,3 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 1
---- !u!114 &5131681203431048334
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1862796331743748649}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b5cf5d04c3bd94fe889d594a935eb230, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fallCheck: {fileID: 0}
-  obstacleLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  deathSound: {fileID: 8300000, guid: 5dd9f3dffa8054b8182ad1ca00011ed0, type: 3}

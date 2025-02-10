@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd26828fdbfc24531b7fdd3cbc98ce2e, type: 3}
   m_Name: First Sprint
   m_EditorClassIdentifier: 
-  id: "\u041F\u0435\u0440\u0432\u044B\u0439 \u0440\u044B\u0432\u043E\u043A"
-  achievementName: 
-  description: 
-  threshold: 0
+  id: First Sprint
+  achievementName: First Sprint
+  description: Run 100 meters
+  threshold: 100
   lockedSprite: {fileID: 0}
   unlockedSprite: {fileID: 0}
   isUnlocked: 0
   achievementType: 0
-  progressType: 0
+  progressType: 1
   isSecret: 0
   onUnlocked:
     m_PersistentCalls:
