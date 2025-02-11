@@ -15,21 +15,32 @@ public class LoadingScene : MonoBehaviour
 
     private void Start()
     {
-        loadingCircleAnimator = loadingCircleBar.GetComponent<Animator>(); // Аниматор круга загрузки
-        textAnimator = textLoading.GetComponent<Animator>(); // Аниматор текста
-
-        loadingCircleBar.gameObject.SetActive(false);
-        textLoading.text = "Press to Play";
-        generalButton.SetActive(true);
+        if (loadingCircleBar != null)
+        {
+            loadingCircleAnimator = loadingCircleBar.GetComponent<Animator>(); // Аниматор круга загрузки
+            loadingCircleBar.gameObject.SetActive(false);
+        }
+        if (textLoading != null)
+        {
+            textAnimator = textLoading.GetComponent<Animator>(); // Аниматор текста
+            textLoading.text = "Press to Play";
+        }
+        if (generalButton != null)
+        {
+            generalButton.SetActive(true);
+        }
     }
 
+    // Этот метод должен быть привязан к кнопке из загрузочной сцены
     public void LoadScene(int sceneId)
     {
-        if (!isLoading) 
+        if (!isLoading)
         {
             isLoading = true;
-            loadingCircleBar.gameObject.SetActive(true);
-            generalButton.gameObject.SetActive(false);
+            if (loadingCircleBar != null)
+                loadingCircleBar.gameObject.SetActive(true);
+            if (generalButton != null)
+                generalButton.SetActive(false);
 
             if (loadingCircleAnimator != null)
             {
@@ -46,7 +57,8 @@ public class LoadingScene : MonoBehaviour
 
     IEnumerator LoadSceneAsync(int sceneId)
     {
-        textLoading.text = "Loading...";
+        if (textLoading != null)
+            textLoading.text = "Loading...";
 
         AsyncOperation operation = SceneManager.LoadSceneAsync(sceneId);
         operation.allowSceneActivation = false;
@@ -54,21 +66,16 @@ public class LoadingScene : MonoBehaviour
         while (!operation.isDone)
         {
             float progress = Mathf.Clamp01(operation.progress / 0.9f);
-            textLoading.text = $"Loading {Mathf.RoundToInt(progress * 100)}%";
-            loadingCircleBar.transform.Rotate(0, 0, -200 * Time.deltaTime);
+            if (textLoading != null)
+                textLoading.text = $"Loading {Mathf.RoundToInt(progress * 100)}%";
+            if (loadingCircleBar != null)
+                loadingCircleBar.transform.Rotate(0, 0, -200 * Time.deltaTime);
 
             if (operation.progress >= 0.9f)
             {
-                
-
-                // Отключаем анимацию текста
                 if (textAnimator != null)
-                {
                     textAnimator.enabled = false;
-                    operation.allowSceneActivation = true;
-                }
-
-               
+                operation.allowSceneActivation = true;
             }
             yield return null;
         }

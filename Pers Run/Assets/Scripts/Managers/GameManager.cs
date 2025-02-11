@@ -62,6 +62,7 @@ public class GameManager : MonoBehaviour
     private float bestDistance;
     private int bestScore;
     private Transform[] respawnPoints;
+    
     #endregion
 
     #region Initialization Methods
@@ -203,12 +204,13 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
- public void ExitGame()
+public void ExitGame()
 {
-    Time.timeScale = 1f; 
-    SceneManager.LoadScene("LoadingScene"); 
+    Time.timeScale = 1f;
+    // Сброс состояния, чтобы стартовое меню показывалось в следующей сцене
+    MenuManager.ResetGameStart();
+    SceneManager.LoadScene("LoadingScene");
 }
-
 
 
     #endregion
