@@ -1,7 +1,9 @@
+using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using System;
+using UnityEngine.Localization;  // Для работы с локализованными строками
 
 public class GameManager : MonoBehaviour
 {
@@ -48,6 +50,15 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Sprite fullHeartSprite;
     #endregion
 
+    #region Локализованные строки
+    [Header("Локализованные строки (настройте ключи в инспекторе)")]
+    [SerializeField] private LocalizedString scoreFormat;          // Ключ: например, "ScoreFormat" → "Score: {0}"
+    [SerializeField] private LocalizedString bestScoreFormat;      // Ключ: "BestScoreFormat" → "Best Score: {0}"
+    [SerializeField] private LocalizedString distanceFormat;       // Ключ: "DistanceFormat" → "Distance: {0:F2} m"
+    [SerializeField] private LocalizedString bestDistanceFormat;   // Ключ: "BestDistanceFormat" → "Best: {0:F2} m"
+    [SerializeField] private LocalizedString reviveCostFormat;     // Ключ: "ReviveCostFormat" → "Revive Cost: {0} heart(s)"
+    #endregion
+
     #region Приватные поля
     private int score;
     private bool isGameOver = false;
@@ -62,7 +73,6 @@ public class GameManager : MonoBehaviour
     private float bestDistance;
     private int bestScore;
     private Transform[] respawnPoints;
-    
     #endregion
 
     #region Initialization Methods
@@ -76,6 +86,7 @@ public class GameManager : MonoBehaviour
         UpdateHeartUI();
         gameOverPanel.SetActive(false);
         pauseMenu.SetActive(false);
+
         if (playerInstance == null)
             playerInstance = FindObjectOfType<PersRunner>();
         if (playerInstance != null)
@@ -84,6 +95,7 @@ public class GameManager : MonoBehaviour
         bestDistance = PlayerPrefs.GetFloat(BEST_DISTANCE_KEY, 0f);
         bestScore = PlayerPrefs.GetInt(BEST_SCORE_KEY, 0);
         UpdateDistanceUI();
+
         GameObject[] points = GameObject.FindGameObjectsWithTag("RespawnPoint");
         if (points.Length > 0)
         {
@@ -117,14 +129,23 @@ public class GameManager : MonoBehaviour
     private void UpdateDistanceUI()
     {
         if (currentDistanceTextUI != null)
-            currentDistanceTextUI.text = $"Distance: {currentDistance:F2} m";
+        {
+            distanceFormat.Arguments = new object[] { currentDistance };
+            currentDistanceTextUI.text = distanceFormat.GetLocalizedString();
+        }
         if (bestDistanceTextUI != null)
-            bestDistanceTextUI.text = $"Best: {bestDistance:F2} m";
+        {
+            bestDistanceFormat.Arguments = new object[] { bestDistance };
+            bestDistanceTextUI.text = bestDistanceFormat.GetLocalizedString();
+        }
     }
     private void UpdateScoreUI(int newScore)
     {
         if (scoreText != null)
-            scoreText.text = $"Score: {newScore}";
+        {
+            scoreFormat.Arguments = new object[] { newScore };
+            scoreText.text = scoreFormat.GetLocalizedString();
+        }
     }
     private void UpdateHeartUI()
     {
@@ -172,8 +193,12 @@ public class GameManager : MonoBehaviour
     public void GameOver()
     {
         isGameOver = true;
+        // Обновляем UI панели GameOver с использованием локализованных строк
         if (currentScoreText != null)
-            currentScoreText.text = $"Score: {Score}";
+        {
+            scoreFormat.Arguments = new object[] { Score };
+            currentScoreText.text = scoreFormat.GetLocalizedString();
+        }
         if (Score > bestScore)
         {
             bestScore = Score;
@@ -181,14 +206,26 @@ public class GameManager : MonoBehaviour
             PlayerPrefs.Save();
         }
         if (bestScoreTextUI != null)
-            bestScoreTextUI.text = $"Best Score: {bestScore}";
+        {
+            bestScoreFormat.Arguments = new object[] { bestScore };
+            bestScoreTextUI.text = bestScoreFormat.GetLocalizedString();
+        }
         if (gameOverDistanceTextUI != null)
-            gameOverDistanceTextUI.text = $"Distance: {currentDistance:F2} m";
+        {
+            distanceFormat.Arguments = new object[] { currentDistance };
+            gameOverDistanceTextUI.text = distanceFormat.GetLocalizedString();
+        }
         if (bestDistanceGameOverTextUI != null)
-            bestDistanceGameOverTextUI.text = $"Best Distance: {bestDistance:F2} m";
+        {
+            bestDistanceFormat.Arguments = new object[] { bestDistance };
+            bestDistanceGameOverTextUI.text = bestDistanceFormat.GetLocalizedString();
+        }
         int reviveCost = Mathf.Min(reviveCount + 1, maxReviveCost);
         if (reviveCostText != null)
-            reviveCostText.text = $"Revive Cost: {reviveCost} heart(s)";
+        {
+            reviveCostFormat.Arguments = new object[] { reviveCost };
+            reviveCostText.text = reviveCostFormat.GetLocalizedString();
+        }
         if (currentDistance > bestDistance)
         {
             bestDistance = currentDistance;
@@ -204,15 +241,13 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
-public void ExitGame()
-{
-    Time.timeScale = 1f;
-    // Сброс состояния, чтобы стартовое меню показывалось в следующей сцене
-    MenuManager.ResetGameStart();
-    SceneManager.LoadScene("LoadingScene");
-}
-
-
+    public void ExitGame()
+    {
+        Time.timeScale = 1f;
+        // Сброс состояния, чтобы стартовое меню показывалось в следующей сцене
+        MenuManager.ResetGameStart();
+        SceneManager.LoadScene("LoadingScene");
+    }
     #endregion
 
     #region Pause Management
@@ -259,58 +294,57 @@ public void ExitGame()
             ShowAdForHeart();
         }
     }
- private Transform GetLastRespawnPoint()
-{
-    if (respawnPoints != null && respawnPoints.Length > 0)
+    private Transform GetLastRespawnPoint()
     {
-        Transform lastPoint = null;
-        foreach (Transform point in respawnPoints)
+        if (respawnPoints != null && respawnPoints.Length > 0)
         {
-            // Пропускаем уничтожённые объекты
-            if (point == null)
-                continue;
-
-            if (lastPoint == null || point.position.x > lastPoint.position.x)
+            Transform lastPoint = null;
+            foreach (Transform point in respawnPoints)
             {
-                lastPoint = point;
+                // Пропускаем уничтожённые объекты
+                if (point == null)
+                    continue;
+
+                if (lastPoint == null || point.position.x > lastPoint.position.x)
+                {
+                    lastPoint = point;
+                }
             }
+            if (lastPoint != null)
+                return lastPoint;
         }
-        if (lastPoint != null)
-            return lastPoint;
+        
+        // Если массив respawnPoints пуст или все объекты уничтожены, ищем заново
+        GameObject[] points = GameObject.FindGameObjectsWithTag("RespawnPoint");
+        if (points.Length == 0)
+            return null;
+        Transform lastFound = points[0].transform;
+        foreach (GameObject point in points)
+        {
+            if (point.transform.position.x > lastFound.position.x)
+                lastFound = point.transform;
+        }
+        return lastFound;
     }
-    
-    // Если массив respawnPoints пуст или все объекты уничтожены, ищем заново
-    GameObject[] points = GameObject.FindGameObjectsWithTag("RespawnPoint");
-    if (points.Length == 0)
-        return null;
-    Transform lastFound = points[0].transform;
-    foreach (GameObject point in points)
-    {
-        if (point.transform.position.x > lastFound.position.x)
-            lastFound = point.transform;
-    }
-    return lastFound;
-}
 
-   private void RevivePlayer()
-{
-    if (playerInstance == null)
+    private void RevivePlayer()
     {
-        playerInstance = FindObjectOfType<PersRunner>();
         if (playerInstance == null)
-            return;
+        {
+            playerInstance = FindObjectOfType<PersRunner>();
+            if (playerInstance == null)
+                return;
+        }
+
+        Transform lastRespawnPoint = GetLastRespawnPoint();
+        if (lastRespawnPoint != null)
+            playerInstance.transform.position = lastRespawnPoint.position;
+        else
+            playerInstance.transform.position = Vector3.zero;
+
+        playerInstance.gameObject.SetActive(true);
+        playerInstance.Revive(); 
     }
-
-    Transform lastRespawnPoint = GetLastRespawnPoint();
-    if (lastRespawnPoint != null)
-        playerInstance.transform.position = lastRespawnPoint.position;
-    else
-        playerInstance.transform.position = Vector3.zero;
-
-    playerInstance.gameObject.SetActive(true);
-    playerInstance.Revive(); 
-}
-
 
     private void ShowAdForHeart()
     {

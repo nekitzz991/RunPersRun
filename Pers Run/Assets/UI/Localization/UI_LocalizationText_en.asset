@@ -1,0 +1,127 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: UI_LocalizationText_en
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: 6c05c74f873434b138eed21bee30650e, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 4857082667008
+    m_Localized: PRESS TO PLAY...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5027207831552
+    m_Localized: Best Distance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5113656631296
+    m_Localized: Distance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5172674682880
+    m_Localized: PAUSE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5275103780864
+    m_Localized: GAME OVER
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5323673821184
+    m_Localized: 'Score:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5369542729728
+    m_Localized: 'Best Score:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5432394375168
+    m_Localized: 'Revive Cost:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5503924035584
+    m_Localized: Distance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5583586451456
+    m_Localized: Best Distance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5742206640128
+    m_Localized: Start
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5776113393664
+    m_Localized: Tutorial
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5839418023936
+    m_Localized: Achievement
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5882824876032
+    m_Localized: Pers always runs forward
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5977255436288
+    m_Localized: Tap the screen to make Pers jump
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6056154488832
+    m_Localized: Collect bones to increase the score
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6098118500352
+    m_Localized: Try not to step in poop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6181232828416
+    m_Localized: Watch out for cacti
+    m_Metadata:
+      m_Items: []
+  - m_Id: 32273201094656
+    m_Localized: Press to Play
+    m_Metadata:
+      m_Items: []
+  - m_Id: 32556786376704
+    m_Localized: Loading...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 32629020680192
+    m_Localized: Loading {0}%
+    m_Metadata:
+      m_Items: []
+  - m_Id: 38178126815232
+    m_Localized: 'Score: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 38245399257088
+    m_Localized: 'Best Score: {0}'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 38486483656704
+    m_Localized: 'Distance: {0:F2} m'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 38651386912768
+    m_Localized: 'Best: {0:F2} m'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 38769758560256
+    m_Localized: 'Revive Cost: {0} heart(s)'
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

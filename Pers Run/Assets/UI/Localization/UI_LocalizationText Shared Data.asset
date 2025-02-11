@@ -1,0 +1,152 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: UI_LocalizationText Shared Data
+  m_EditorClassIdentifier: 
+  m_TableCollectionName: UI_LocalizationText
+  m_TableCollectionNameGuidString: 6c05c74f873434b138eed21bee30650e
+  m_Entries:
+  - m_Id: 4647463936000
+    m_Key: LoadingScene
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4857082667008
+    m_Key: PRESS TO PLAY...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 32273201094656
+    m_Key: Press to Play
+    m_Metadata:
+      m_Items: []
+  - m_Id: 32556786376704
+    m_Key: Loading...
+    m_Metadata:
+      m_Items: []
+  - m_Id: 32629020680192
+    m_Key: Loading {0}%
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4954667343872
+    m_Key: ScreenUI
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5027207831552
+    m_Key: Best Distance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5113656631296
+    m_Key: Distance
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5172674682880
+    m_Key: PAUSE
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5248486727680
+    m_Key: GameOverWindow
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5275103780864
+    m_Key: GAME OVER
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5323673821184
+    m_Key: 'Score:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5369542729728
+    m_Key: 'Best Score:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5432394375168
+    m_Key: 'Revive Cost:'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5503924035584
+    m_Key: Distance GO
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5583586451456
+    m_Key: Best Distance GO
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5713643429888
+    m_Key: StartScreenMenu
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5742206640128
+    m_Key: Start
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5776113393664
+    m_Key: Tutorial
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5839418023936
+    m_Key: Achievement
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5864885837824
+    m_Key: TutorialScreen
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5882824876032
+    m_Key: "Run\t"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 5977255436288
+    m_Key: Jump
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6056154488832
+    m_Key: Bone
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6098118500352
+    m_Key: Poop
+    m_Metadata:
+      m_Items: []
+  - m_Id: 6181232828416
+    m_Key: Cacti
+    m_Metadata:
+      m_Items: []
+  - m_Id: 38178126815232
+    m_Key: ScoreFormat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 38245399257088
+    m_Key: BestScoreFormat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 38486483656704
+    m_Key: DistanceFormat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 38651386912768
+    m_Key: BestDistanceFormat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 38769758560256
+    m_Key: ReviveCostFormat
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 5356298639332344189
+  references:
+    version: 2
+    RefIds:
+    - rid: 5356298639332344189
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables, asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1739269767822
