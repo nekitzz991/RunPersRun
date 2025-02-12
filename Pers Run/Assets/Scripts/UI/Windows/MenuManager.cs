@@ -7,7 +7,8 @@ public class MenuManager : MonoBehaviour
     [Header("UI Канвасы")]
     [SerializeField] private GameObject startScreenMenu;
     [SerializeField] private GameObject tutorialScreen;
-    [SerializeField] private GameObject achievementScreen;
+    [SerializeField] private GameObject achievementScreen; 
+    [SerializeField] private GameObject CreditsScreen;
 
     [Header("Единый шрифт")]
     [Tooltip("Шрифт, который будет применяться ко всем UI Text элементам")]
@@ -28,7 +29,6 @@ public class MenuManager : MonoBehaviour
 
     private void Start()
     {
-        // Пытаемся загрузить сохранённый шрифт
         if (PlayerPrefs.HasKey(selectedFontKey))
         {
             string fontName = PlayerPrefs.GetString(selectedFontKey);
@@ -45,7 +45,6 @@ public class MenuManager : MonoBehaviour
         }
         else
         {
-            // Сохраняем шрифт по умолчанию, если сохранения ещё нет
             if (globalFont != null)
             {
                 PlayerPrefs.SetString(selectedFontKey, globalFont.name);
@@ -67,7 +66,7 @@ public class MenuManager : MonoBehaviour
             Time.timeScale = 1f;
         }
 
-        ApplyGlobalFont(); // Применяем единый шрифт ко всем текстовым элементам
+        ApplyGlobalFont(); 
     }
 
     public static void ResetGameStart()
@@ -93,6 +92,12 @@ public class MenuManager : MonoBehaviour
         startScreenMenu.SetActive(false);
         achievementScreen.SetActive(true);
     }
+
+    public void OnCreditsButtonPressed()
+    {
+        startScreenMenu.SetActive(false);
+        CreditsScreen.SetActive(true);
+    }
     
     public void OnBackFromTutorialPressed()
     {
@@ -105,6 +110,12 @@ public class MenuManager : MonoBehaviour
         achievementScreen.SetActive(false);
         startScreenMenu.SetActive(true);
     }
+
+      public void OnBackFromCreditsPressed()
+    {
+        CreditsScreen.SetActive(false);
+        startScreenMenu.SetActive(true);
+    }
     
     public void ShowStartScreen()
     {
@@ -113,16 +124,11 @@ public class MenuManager : MonoBehaviour
         achievementScreen.SetActive(false);
     }
 
-    /// <summary>
-    /// Устанавливает новый глобальный шрифт и сохраняет его выбор.
-    /// </summary>
-    /// <param name="newFont">Новый шрифт для установки.</param>
     public void SetGlobalFont(Font newFont)
     {
         if (newFont != null)
         {
             globalFont = newFont;
-            // Сохраняем выбранный шрифт в PlayerPrefs
             PlayerPrefs.SetString(selectedFontKey, newFont.name);
             PlayerPrefs.Save();
             ApplyGlobalFont();
@@ -130,9 +136,6 @@ public class MenuManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Применяет глобальный шрифт ко всем UI Text элементам в сцене.
-    /// </summary>
     private void ApplyGlobalFont()
     {
         if (globalFont == null)
