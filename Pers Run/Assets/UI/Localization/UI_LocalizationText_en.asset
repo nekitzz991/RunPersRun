@@ -43,11 +43,11 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 5503924035584
-    m_Localized: 'Distance '
+    m_Localized: 'Distance: {0} m'
     m_Metadata:
       m_Items: []
   - m_Id: 5583586451456
-    m_Localized: Best Distance
+    m_Localized: 'Best Distance: {0} m'
     m_Metadata:
       m_Items: []
   - m_Id: 5742206640128

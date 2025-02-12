@@ -1,9 +1,9 @@
 using System;
-using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Localization;
+using UnityEngine.Localization.Components;
 
 public class GameManager : MonoBehaviour
 {
@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
             return;
         }
         Instance = this;
+        DontDestroyOnLoad(gameObject); // Сделаем объект постоянным между сценами
     }
     #endregion
 
@@ -57,6 +58,8 @@ public class GameManager : MonoBehaviour
     #region Локализованные строки
     [Header("Локализованные строки для текущего счета")]
     [SerializeField] private LocalizedString scoreFormat;
+    [SerializeField] private LocalizeStringEvent currentDistanceLocalizeEvent;
+    [SerializeField] private LocalizeStringEvent bestDistanceLocalizeEvent;
     #endregion
 
     #region Приватные поля
@@ -79,23 +82,22 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         OnScoreChanged += UpdateScoreUI;
-        AudioManager.Instance.PlayMusic();
+        AudioManager.Instance?.PlayMusic();
+
         Score = 0;
         availableHearts = 0;
         nextHeartThreshold = pointsForExtraHeart;
         UpdateHeartUI();
 
-        gameOverPanel.SetActive(false);
-        pauseMenu.SetActive(false);
-        if (gameplayUI != null)
-        {
-            gameplayUI.SetActive(true);
-        }
+        gameOverPanel?.SetActive(false);
+        pauseMenu?.SetActive(false);
+        gameplayUI?.SetActive(true);
 
         if (playerInstance == null)
             playerInstance = FindObjectOfType<PersRunner>();
         if (playerInstance != null)
             gameStartX = playerInstance.transform.position.x;
+
         currentDistance = 0f;
         bestDistance = PlayerPrefs.GetFloat(BEST_DISTANCE_KEY, 0f);
         bestScore = PlayerPrefs.GetInt(BEST_SCORE_KEY, 0);
@@ -132,26 +134,32 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Обновление UI
-   private void UpdateDistanceUI()
-{
-    if (currentDistanceTextUI != null)
+
+    /// <summary>
+    /// Вспомогательный метод для обновления локализованного текста (улучшение 4)
+    /// </summary>
+    private void UpdateLocalizedText(LocalizeStringEvent localizeEvent, object value)
+    {
+        if (localizeEvent != null)
+        {
+            localizeEvent.StringReference.Arguments = new object[] { value };
+            localizeEvent.RefreshString();
+        }
+    }
+
+    private void UpdateDistanceUI()
     {
         int currentDistanceMeters = Mathf.RoundToInt(currentDistance);
-        currentDistanceTextUI.text = "Distance: " + currentDistanceMeters + " m";
-    }
-    if (bestDistanceTextUI != null)
-    {
         int bestDistanceMeters = Mathf.RoundToInt(bestDistance);
-        bestDistanceTextUI.text = "Best Distance: " + bestDistanceMeters + " m";
-    }
-}
 
+        UpdateLocalizedText(currentDistanceLocalizeEvent, currentDistanceMeters);
+        UpdateLocalizedText(bestDistanceLocalizeEvent, bestDistanceMeters);
+    }
 
     private void UpdateScoreUI(int newScore)
     {
         if (scoreText != null)
         {
-            // Текущий счет остается с логикой локализации
             scoreFormat.Arguments = new object[] { newScore };
             scoreText.text = scoreFormat.GetLocalizedString();
         }
@@ -201,67 +209,68 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Игровой процесс
-  public void GameOver()
-{
-    isGameOver = true;
+    public void GameOver()
+    {
+        isGameOver = true;
 
-    // Скрываем основной UI при показе панели GameOver
-    if (gameplayUI != null)
-    {
-        gameplayUI.SetActive(false);
-    }
+        // Скрываем основной UI при показе панели GameOver
+        gameplayUI?.SetActive(false);
 
-    // Обновляем UI панели GameOver для текущего счета (с локализацией)
-    if (currentScoreText != null)
-    {
-        scoreFormat.Arguments = new object[] { Score };
-        currentScoreText.text = scoreFormat.GetLocalizedString();
-    }
-    if (Score > bestScore)
-    {
-        bestScore = Score;
-        PlayerPrefs.SetInt(BEST_SCORE_KEY, bestScore);
-        PlayerPrefs.Save();
-    }
-    if (bestScoreTextUI != null)
-    {
-        bestScoreTextUI.text = bestScore.ToString();
-    }
-    
-    // Отображаем дистанцию в виде целых чисел (в метрах)
-    if (gameOverDistanceTextUI != null)
-    {
-        int currentDistanceMeters = Mathf.RoundToInt(currentDistance);
-        gameOverDistanceTextUI.text = currentDistanceMeters.ToString() + " m";
-    }
-    if (bestDistanceGameOverTextUI != null)
-    {
-        int bestDistanceMeters = Mathf.RoundToInt(bestDistance);
-        bestDistanceGameOverTextUI.text = bestDistanceMeters.ToString() + " m";
-    }
-    
-    int reviveCost = Mathf.Min(reviveCount + 1, maxReviveCost);
-    if (reviveCostText != null)
-    {
-        reviveCostText.text = reviveCost.ToString();
-    }
+        // Обновляем UI панели GameOver для текущего счета (с локализацией)
+        if (currentScoreText != null)
+        {
+            scoreFormat.Arguments = new object[] { Score };
+            currentScoreText.text = scoreFormat.GetLocalizedString();
+        }
 
-    if (currentDistance > bestDistance)
-    {
-        bestDistance = currentDistance;
-        PlayerPrefs.SetFloat(BEST_DISTANCE_KEY, bestDistance);
-        PlayerPrefs.Save();
-    }
-    if (heartsCountGameOverText != null)
-    {
-        heartsCountGameOverText.text = availableHearts.ToString();
-    }
+        bool recordUpdated = false;
+        if (Score > bestScore)
+        {
+            bestScore = Score;
+            PlayerPrefs.SetInt(BEST_SCORE_KEY, bestScore);
+            recordUpdated = true;
+        }
+        if (bestScoreTextUI != null)
+        {
+            bestScoreTextUI.text = bestScore.ToString();
+        }
+        
+        // Отображаем дистанцию в виде целых чисел (в метрах) с использованием интерполяции строк (улучшение 8)
+        if (gameOverDistanceTextUI != null)
+        {
+            int currentDistanceMeters = Mathf.RoundToInt(currentDistance);
+            gameOverDistanceTextUI.text = $"{currentDistanceMeters} m";
+        }
+        if (bestDistanceGameOverTextUI != null)
+        {
+            int bestDistanceMeters = Mathf.RoundToInt(bestDistance);
+            bestDistanceGameOverTextUI.text = $"{bestDistanceMeters} m";
+        }
+        
+        int currentReviveCost = GetCurrentReviveCost();
+        if (reviveCostText != null)
+        {
+            reviveCostText.text = currentReviveCost.ToString();
+        }
 
-    gameOverPanel.SetActive(true);
-    AudioManager.Instance.StopMusic();
-    AudioManager.Instance.PlayGameOverMusic();
-}
+        if (currentDistance > bestDistance)
+        {
+            bestDistance = currentDistance;
+            PlayerPrefs.SetFloat(BEST_DISTANCE_KEY, bestDistance);
+            recordUpdated = true;
+        }
+        if (heartsCountGameOverText != null)
+        {
+            heartsCountGameOverText.text = availableHearts.ToString();
+        }
 
+        if (recordUpdated)
+            PlayerPrefs.Save();
+
+        gameOverPanel?.SetActive(true);
+        AudioManager.Instance?.StopMusic();
+        AudioManager.Instance?.PlayGameOverMusic();
+    }
 
     public void RestartGame()
     {
@@ -281,13 +290,10 @@ public class GameManager : MonoBehaviour
     public void TogglePause()
     {
         isPaused = !isPaused;
-        pauseMenu.SetActive(isPaused);
+        pauseMenu?.SetActive(isPaused);
 
         // Скрываем или показываем основной UI в зависимости от состояния паузы
-        if (gameplayUI != null)
-        {
-            gameplayUI.SetActive(!isPaused);
-        }
+        gameplayUI?.SetActive(!isPaused);
 
         Time.timeScale = isPaused ? 0f : 1f;
     }
@@ -296,39 +302,36 @@ public class GameManager : MonoBehaviour
     #region Аудио
     public void OnSomeButtonClicked()
     {
-        AudioManager.Instance.PlayButtonClickSound();
+        AudioManager.Instance?.PlayButtonClickSound();
     }
 
     public void ToggleMusic()
     {
-        AudioManager.Instance.ToggleMusic();
+        AudioManager.Instance?.ToggleMusic();
     }
 
     public void ToggleSFX()
     {
-        AudioManager.Instance.ToggleSFX();
+        AudioManager.Instance?.ToggleSFX();
     }
     #endregion
 
     #region Логика возрождения
     public void Revive()
     {
-        int reviveCost = Mathf.Min(reviveCount + 1, maxReviveCost);
-        if (availableHearts >= reviveCost)
+        int currentReviveCost = GetCurrentReviveCost();
+        if (availableHearts >= currentReviveCost)
         {
-            availableHearts -= reviveCost;
+            availableHearts -= currentReviveCost;
             reviveCount++;
 
             // Закрываем панель GameOver и возвращаем основной UI
-            gameOverPanel.SetActive(false);
-            if (gameplayUI != null)
-            {
-                gameplayUI.SetActive(true);
-            }
+            gameOverPanel?.SetActive(false);
+            gameplayUI?.SetActive(true);
 
             isGameOver = false;
-            AudioManager.Instance.StopGameOverMusic();
-            AudioManager.Instance.PlayMusic();
+            AudioManager.Instance?.StopGameOverMusic();
+            AudioManager.Instance?.PlayMusic();
             RevivePlayer();
             UpdateHeartUI();
         }
@@ -336,6 +339,14 @@ public class GameManager : MonoBehaviour
         {
             ShowAdForHeart();
         }
+    }
+
+    /// <summary>
+    /// Вычисление текущей стоимости возрождения (улучшение 6)
+    /// </summary>
+    private int GetCurrentReviveCost()
+    {
+        return Mathf.Min(reviveCount + 1, maxReviveCost);
     }
 
     private Transform GetLastRespawnPoint()
