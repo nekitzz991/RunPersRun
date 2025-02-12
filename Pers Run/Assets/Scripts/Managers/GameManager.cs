@@ -55,11 +55,8 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Локализованные строки
-    [Header("Локализованные строки (настройте ключи в инспекторе)")]
-    [SerializeField] private LocalizedString scoreFormat;          
-    [SerializeField] private LocalizedString bestScoreFormat;    
-    [SerializeField] private LocalizedString distanceFormat;       
-    [SerializeField] private LocalizedString bestDistanceFormat;   
+    [Header("Локализованные строки для текущего счета")]
+    [SerializeField] private LocalizedString scoreFormat;
     #endregion
 
     #region Приватные поля
@@ -135,24 +132,26 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Обновление UI
-    private void UpdateDistanceUI()
+   private void UpdateDistanceUI()
+{
+    if (currentDistanceTextUI != null)
     {
-        if (currentDistanceTextUI != null)
-        {
-            distanceFormat.Arguments = new object[] { currentDistance };
-            currentDistanceTextUI.text = distanceFormat.GetLocalizedString();
-        }
-        if (bestDistanceTextUI != null)
-        {
-            bestDistanceFormat.Arguments = new object[] { bestDistance };
-            bestDistanceTextUI.text = bestDistanceFormat.GetLocalizedString();
-        }
+        int currentDistanceMeters = Mathf.RoundToInt(currentDistance);
+        currentDistanceTextUI.text = "Distance: " + currentDistanceMeters + " m";
     }
+    if (bestDistanceTextUI != null)
+    {
+        int bestDistanceMeters = Mathf.RoundToInt(bestDistance);
+        bestDistanceTextUI.text = "Best Distance: " + bestDistanceMeters + " m";
+    }
+}
+
 
     private void UpdateScoreUI(int newScore)
     {
         if (scoreText != null)
         {
+            // Текущий счет остается с логикой локализации
             scoreFormat.Arguments = new object[] { newScore };
             scoreText.text = scoreFormat.GetLocalizedString();
         }
@@ -202,59 +201,67 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Игровой процесс
-    public void GameOver()
+  public void GameOver()
+{
+    isGameOver = true;
+
+    // Скрываем основной UI при показе панели GameOver
+    if (gameplayUI != null)
     {
-        isGameOver = true;
-
-        // Скрываем основной UI при показе панели GameOver
-        if (gameplayUI != null)
-        {
-            gameplayUI.SetActive(false);
-        }
-
-        // Обновляем UI панели GameOver с использованием локализованных строк
-        if (currentScoreText != null)
-        {
-            scoreFormat.Arguments = new object[] { Score };
-            currentScoreText.text = scoreFormat.GetLocalizedString();
-        }
-        if (Score > bestScore)
-        {
-            bestScore = Score;
-            PlayerPrefs.SetInt(BEST_SCORE_KEY, bestScore);
-            PlayerPrefs.Save();
-        }
-        if (bestScoreTextUI != null)
-        {
-            bestScoreFormat.Arguments = new object[] { bestScore };
-            bestScoreTextUI.text = bestScoreFormat.GetLocalizedString();
-        }
-        if (gameOverDistanceTextUI != null)
-        {
-            distanceFormat.Arguments = new object[] { currentDistance };
-            gameOverDistanceTextUI.text = distanceFormat.GetLocalizedString();
-        }
-        if (bestDistanceGameOverTextUI != null)
-        {
-            bestDistanceFormat.Arguments = new object[] { bestDistance };
-            bestDistanceGameOverTextUI.text = bestDistanceFormat.GetLocalizedString();
-        }
-        int reviveCost = Mathf.Min(reviveCount + 1, maxReviveCost);
-        if (currentDistance > bestDistance)
-        {
-            bestDistance = currentDistance;
-            PlayerPrefs.SetFloat(BEST_DISTANCE_KEY, bestDistance);
-            PlayerPrefs.Save();
-        }
-        if (heartsCountGameOverText != null)
-        {
-            heartsCountGameOverText.text = availableHearts.ToString();
-        }
-
-        gameOverPanel.SetActive(true);
-        AudioManager.Instance.StopMusic();
-        AudioManager.Instance.PlayGameOverMusic();
+        gameplayUI.SetActive(false);
     }
+
+    // Обновляем UI панели GameOver для текущего счета (с локализацией)
+    if (currentScoreText != null)
+    {
+        scoreFormat.Arguments = new object[] { Score };
+        currentScoreText.text = scoreFormat.GetLocalizedString();
+    }
+    if (Score > bestScore)
+    {
+        bestScore = Score;
+        PlayerPrefs.SetInt(BEST_SCORE_KEY, bestScore);
+        PlayerPrefs.Save();
+    }
+    if (bestScoreTextUI != null)
+    {
+        bestScoreTextUI.text = bestScore.ToString();
+    }
+    
+    // Отображаем дистанцию в виде целых чисел (в метрах)
+    if (gameOverDistanceTextUI != null)
+    {
+        int currentDistanceMeters = Mathf.RoundToInt(currentDistance);
+        gameOverDistanceTextUI.text = currentDistanceMeters.ToString() + " m";
+    }
+    if (bestDistanceGameOverTextUI != null)
+    {
+        int bestDistanceMeters = Mathf.RoundToInt(bestDistance);
+        bestDistanceGameOverTextUI.text = bestDistanceMeters.ToString() + " m";
+    }
+    
+    int reviveCost = Mathf.Min(reviveCount + 1, maxReviveCost);
+    if (reviveCostText != null)
+    {
+        reviveCostText.text = reviveCost.ToString();
+    }
+
+    if (currentDistance > bestDistance)
+    {
+        bestDistance = currentDistance;
+        PlayerPrefs.SetFloat(BEST_DISTANCE_KEY, bestDistance);
+        PlayerPrefs.Save();
+    }
+    if (heartsCountGameOverText != null)
+    {
+        heartsCountGameOverText.text = availableHearts.ToString();
+    }
+
+    gameOverPanel.SetActive(true);
+    AudioManager.Instance.StopMusic();
+    AudioManager.Instance.PlayGameOverMusic();
+}
+
 
     public void RestartGame()
     {

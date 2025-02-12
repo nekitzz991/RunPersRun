@@ -39,14 +39,6 @@ MonoBehaviour:
     m_Key: ScreenUI
     m_Metadata:
       m_Items: []
-  - m_Id: 5027207831552
-    m_Key: Best Distance
-    m_Metadata:
-      m_Items: []
-  - m_Id: 5113656631296
-    m_Key: Distance
-    m_Metadata:
-      m_Items: []
   - m_Id: 5172674682880
     m_Key: PAUSE
     m_Metadata:
@@ -137,6 +129,14 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 38769758560256
     m_Key: ReviveCostFormat
+    m_Metadata:
+      m_Items: []
+  - m_Id: 365735850270720
+    m_Key: CreditsButton
+    m_Metadata:
+      m_Items: []
+  - m_Id: 365795820429312
+    m_Key: Credits
     m_Metadata:
       m_Items: []
   m_Metadata:

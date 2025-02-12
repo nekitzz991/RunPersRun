@@ -22,14 +22,6 @@ MonoBehaviour:
     m_Localized: PRESS TO PLAY...
     m_Metadata:
       m_Items: []
-  - m_Id: 5027207831552
-    m_Localized: Best Distance
-    m_Metadata:
-      m_Items: []
-  - m_Id: 5113656631296
-    m_Localized: Distance
-    m_Metadata:
-      m_Items: []
   - m_Id: 5172674682880
     m_Localized: PAUSE
     m_Metadata:
@@ -51,7 +43,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 5503924035584
-    m_Localized: Distance
+    m_Localized: 'Distance '
     m_Metadata:
       m_Items: []
   - m_Id: 5583586451456
@@ -111,15 +103,23 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 38486483656704
-    m_Localized: 'Distance: {0:F2} m'
+    m_Localized: 'Distance: {0} m'
     m_Metadata:
       m_Items: []
   - m_Id: 38651386912768
-    m_Localized: 'Best: {0:F2} m'
+    m_Localized: 'Best Distance: {0} m'
     m_Metadata:
       m_Items: []
   - m_Id: 38769758560256
     m_Localized: 'Revive Cost: {0} heart(s)'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 365735850270720
+    m_Localized: Credits
+    m_Metadata:
+      m_Items: []
+  - m_Id: 365795820429312
+    m_Localized: CREDITS
     m_Metadata:
       m_Items: []
   references:
