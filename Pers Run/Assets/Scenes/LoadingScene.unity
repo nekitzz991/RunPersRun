@@ -723,7 +723,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 4f77a90ecc682490287bfaea1747fbfe, type: 3}
+    m_Font: {fileID: 12800000, guid: 49e3fc3932e504c96885c68c5f463316, type: 3}
     m_FontSize: 72
     m_FontStyle: 1
     m_BestFit: 0
@@ -1312,7 +1312,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 16.875
+  orthographic size: 20.0625
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
