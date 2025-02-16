@@ -104,6 +104,7 @@ MonoBehaviour:
   speed: 5
   rotateProjectile: 1
   rotationSpeed: 360
+  lifetime: 10
 --- !u!61 &7395785204565302690
 BoxCollider2D:
   m_ObjectHideFlags: 0
