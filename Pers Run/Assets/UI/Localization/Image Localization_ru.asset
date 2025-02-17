@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97269afb30aa84742ae3f3342603618a, type: 3}
+  m_Name: Image Localization_ru
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: ru
+  m_SharedData: {fileID: 11400000, guid: 06f90aa65e81b404f9b4468e1a0f22e0, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 26993483776
+    m_Localized: '491d13ece805d4254b5434284d28b113[PresstoPlay_RU]'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4382899822592
+    m_Localized: '90909706b4e9c4af381e29b515e81f52[Start_RU]'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4413417578496
+    m_Localized: 'e192e003b79be4366a5188b365b13168[Tutorial_RU]'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4435722887168
+    m_Localized: 'd6d04713675264637afaa8d7bdde37cd[Credits_RU]'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10492083953664
+    m_Localized: 'd6d19020085e24e9ba4bf03d2b3964c0[TutorialHeaderText_RU]'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10540431695872
+    m_Localized: '62196f78e35904e95856bb3bc39c58c6[CreditsHeaderText_RU]'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10858557071360
+    m_Localized: '4b7b73a89ee68479ca43f8b8ad48f9b4[Run_Ru]'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10867457384448
+    m_Localized: 'e29a8159c8f5f444cab7c36106efceef[Poop_RU]'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10864303267840
+    m_Localized: '1414c8d53116d484d80f14f4dfe2b881[Jump_RU]'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10870242402304
+    m_Localized: '032b8d295c89d4c29a5c8db772c34a8e[Cacti_RU]'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10865913880576
+    m_Localized: '63e9c707a32a24d3290b39159604c4ad[Bone_RU]'
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

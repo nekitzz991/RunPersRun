@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: Localization-Assets-Shared
   m_GUID: 7379c34f9b73c4dee8150181defd03c5
   m_SerializeEntries:
+  - m_GUID: 06f90aa65e81b404f9b4468e1a0f22e0
+    m_Address: Assets/UI/Localization/Image Localization Shared Data.asset
+    m_ReadOnly: 1
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1317265bd367bf24c8c9252ba14c8797
     m_Address: Assets/Samples/Localization/1.5.4/Smart Strings - Persistent Variables/String
       Table/Gender Sample Shared Data.asset

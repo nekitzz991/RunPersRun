@@ -22,6 +22,15 @@ public class UIAnimationManager : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+{
+    foreach (var element in elements)
+    {
+        StartCoroutine(AnimateElement(element));
+    }
+}
+
+
    private IEnumerator AnimateElement(AnimatedUIElement element)
 {
     int frameIndex = 0;

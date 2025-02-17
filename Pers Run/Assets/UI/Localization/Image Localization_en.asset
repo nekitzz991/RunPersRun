@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97269afb30aa84742ae3f3342603618a, type: 3}
+  m_Name: Image Localization_en
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: en
+  m_SharedData: {fileID: 11400000, guid: 06f90aa65e81b404f9b4468e1a0f22e0, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 26993483776
+    m_Localized: 'ea6582be2e5374e778253b73d65589be[PresstoPlay]'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4382899822592
+    m_Localized: '5ce770196d27c41edb47f071a348dc89[Start]'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4435722887168
+    m_Localized: '101fc4497234c4cfe81cf55921f073d3[Credits]'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4413417578496
+    m_Localized: '2327e22c95f5c44b4ad63b5be3490743[Tutorial]'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10492083953664
+    m_Localized: '40854fa78eb78453fa414c979d657d22[TutorialHeaderText]'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10540431695872
+    m_Localized: '78b70adf5132742f09c7a0b71f9545aa[CreditsHeaderText]'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10865913880576
+    m_Localized: '417f7af9fa2cc4987a1893b2447a61b6[Bone_EN]'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10870242402304
+    m_Localized: '34745e30dbd284ecc82d5d7f5a82c07c[Cacti_EN]'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10864303267840
+    m_Localized: 'e361d4333ca7d471ea35765b046673b4[Jump_EN]'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10867457384448
+    m_Localized: 'a9b0c1c908c2f4aa6bc32ac4ad6c53c5[Poop_EN]'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 10858557071360
+    m_Localized: '5030599b2d18145d686d14d3902effe5[Run_EN]'
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []
