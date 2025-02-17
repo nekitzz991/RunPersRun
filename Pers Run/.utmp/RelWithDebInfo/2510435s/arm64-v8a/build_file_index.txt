@@ -1,0 +1,3 @@
+/Users/nekitzz991/Desktop/Pers Run/Pers-Run/Pers Run/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/src/main/cpp/CMakeLists.txt
+/Users/nekitzz991/Desktop/Pers Run/Pers-Run/Pers Run/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/src/main/cpp/FramePacing/CMakeLists.txt
+/Users/nekitzz991/Desktop/Pers Run/Pers-Run/Pers Run/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/src/main/cpp/GameActivity/CMakeLists.txt
