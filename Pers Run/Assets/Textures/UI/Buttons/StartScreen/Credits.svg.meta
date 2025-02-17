@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 2327e22c95f5c44b4ad63b5be3490743
+guid: 101fc4497234c4cfe81cf55921f073d3
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -10,7 +10,7 @@ ScriptedImporter:
   script: {fileID: 11500000, guid: a57477913897c46af95d590f580878bd, type: 3}
   svgType: 1
   texturedSpriteMeshType: 0
-  svgPixelsPerUnit: 100
+  svgPixelsPerUnit: 32
   gradientResolution: 256
   alignment: 0
   customPivot: {x: 0, y: 0}
@@ -35,7 +35,7 @@ ScriptedImporter:
   filterMode: 1
   sampleCount: 4
   preserveSVGImageAspect: 0
-  useSVGPixelsPerUnit: 0
+  useSVGPixelsPerUnit: 1
   spriteData:
     TessellationDetail: 0
     SpriteRect:
@@ -51,5 +51,5 @@ ScriptedImporter:
         y: 0
         width: 0
         height: 0
-      spriteID: 923812813a4734228871ccd2d41943c5
+      spriteID: f533b5baea6ba4b86b9fe74557803f3d
     PhysicsOutlines: []

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 5f27fe60c412c466ea96a232c9ae277a
+guid: 7a10614d189aa4b27828c820ed13d386
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -6557946037531036107
-    second: WindowsBackground_0
+      213: 4739791456999103732
+    second: Back1080_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -139,12 +139,12 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: WindowsBackground_0
+      name: Back1080_0
       rect:
         serializedVersion: 2
         x: 0
         y: 0
-        width: 3240
+        width: 1920
         height: 1080
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -154,8 +154,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 53638c803de7df4a0800000000000000
-      internalID: -6557946037531036107
+      spriteID: 4fcdcd7b73f17c140800000000000000
+      internalID: 4739791456999103732
       vertices: []
       indices: 
       edges: []
@@ -174,7 +174,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      WindowsBackground_0: -6557946037531036107
+      Back1080_0: 4739791456999103732
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
