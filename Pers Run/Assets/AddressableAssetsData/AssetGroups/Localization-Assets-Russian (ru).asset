@@ -51,8 +51,20 @@ MonoBehaviour:
     m_SerializedLabels:
     - Locale-ru
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6cf8ee816166246b68fc8fb66c6b8339
+    m_Address: GameOverTextRu
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ru
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 90909706b4e9c4af381e29b515e81f52
     m_Address: Start_RU
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-ru
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a83e6d7d3c4024f8ab928604f018167a
+    m_Address: StatisticsTextRu
     m_ReadOnly: 1
     m_SerializedLabels:
     - Locale-ru

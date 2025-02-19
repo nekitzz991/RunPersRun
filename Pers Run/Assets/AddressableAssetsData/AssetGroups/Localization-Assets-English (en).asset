@@ -57,6 +57,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Locale-en
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 552963155022e4b14b5d751a358b0c15
+    m_Address: StatisticsText
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-en
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5ce770196d27c41edb47f071a348dc89
     m_Address: Start
     m_ReadOnly: 1
@@ -83,6 +89,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ea6582be2e5374e778253b73d65589be
     m_Address: PresstoPlay
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-en
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ec18b6f257c3d421c90fca9f13f75989
+    m_Address: GameOverText
     m_ReadOnly: 1
     m_SerializedLabels:
     - Locale-en

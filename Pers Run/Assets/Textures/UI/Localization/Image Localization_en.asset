@@ -66,6 +66,14 @@ MonoBehaviour:
     m_Localized: '4c5b8947609114b1f895760dc79058d0[Pause]'
     m_Metadata:
       m_Items: []
+  - m_Id: 875409531985920
+    m_Localized: 'ec18b6f257c3d421c90fca9f13f75989[GameOverText]'
+    m_Metadata:
+      m_Items: []
+  - m_Id: 875478184353792
+    m_Localized: '552963155022e4b14b5d751a358b0c15[StatisticsText]'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

@@ -44,6 +44,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Text reviveCostText;
     [SerializeField] private int maxReviveCost = 3;
     [SerializeField] private Text heartsCountGameOverText;
+    [SerializeField] private Button reviveButton;
 
     [Header("Элементы UI для сердец")]
     [SerializeField] private Image heartIcon;
@@ -219,8 +220,7 @@ public class GameManager : MonoBehaviour
         // Обновляем UI панели GameOver для текущего счета (с локализацией)
         if (currentScoreText != null)
         {
-            scoreFormat.Arguments = new object[] { Score };
-            currentScoreText.text = scoreFormat.GetLocalizedString();
+            currentScoreText.text = score.ToString();
         }
 
         bool recordUpdated = false;
@@ -317,18 +317,25 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Логика возрождения
+
+     private void UpdateReviveButtonColor(bool hasEnoughHearts)
+    {
+        Color color = reviveButton.image.color;
+        // Если хватает сердец — полная непрозрачность, иначе альфа = 100/255
+        color.a = hasEnoughHearts ? 1f : 100f / 255f;
+        reviveButton.image.color = color;
+    }
     public void Revive()
     {
         int currentReviveCost = GetCurrentReviveCost();
         if (availableHearts >= currentReviveCost)
         {
+            // Если достаточно сердец — обновляем цвет кнопки на нормальный и возрождаем игрока
+            UpdateReviveButtonColor(true);
             availableHearts -= currentReviveCost;
             reviveCount++;
-
-            // Закрываем панель GameOver и возвращаем основной UI
             gameOverPanel?.SetActive(false);
             gameplayUI?.SetActive(true);
-
             isGameOver = false;
             AudioManager.Instance?.StopGameOverMusic();
             AudioManager.Instance?.PlayMusic();
@@ -337,9 +344,13 @@ public class GameManager : MonoBehaviour
         }
         else
         {
+            // Если не хватает сердец — меняем альфа кнопки и можем показать рекламу
+            UpdateReviveButtonColor(false);
             ShowAdForHeart();
         }
     }
+
+    
 
     /// <summary>
     /// Вычисление текущей стоимости возрождения (улучшение 6)
