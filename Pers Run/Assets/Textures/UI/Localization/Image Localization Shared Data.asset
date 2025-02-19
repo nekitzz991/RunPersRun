@@ -59,6 +59,18 @@ MonoBehaviour:
     m_Key: CreditsHeader
     m_Metadata:
       m_Items: []
+  - m_Id: 875407556468736
+    m_Key: Pause
+    m_Metadata:
+      m_Items: []
+  - m_Id: 875409531985920
+    m_Key: GameOver
+    m_Metadata:
+      m_Items: []
+  - m_Id: 875478184353792
+    m_Key: Statistics
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items:
     - rid: 5356298777706102786
@@ -116,6 +128,10 @@ MonoBehaviour:
           - en
           - ru
         - m_KeyId: 10858557071360
+          m_TableCodes:
+          - en
+          - ru
+        - m_KeyId: 875407556468736
           m_TableCodes:
           - en
           - ru

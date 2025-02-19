@@ -62,6 +62,10 @@ MonoBehaviour:
     m_Localized: '63e9c707a32a24d3290b39159604c4ad[Bone_RU]'
     m_Metadata:
       m_Items: []
+  - m_Id: 875407556468736
+    m_Localized: 'b18d1ec22fa1b4d39ab065d515f92083[Pause_Ru]'
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
