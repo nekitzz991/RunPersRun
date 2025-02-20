@@ -63,6 +63,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] private LocalizeStringEvent bestDistanceLocalizeEvent;
     #endregion
 
+    #region Ссылки на аниматоры окон
+    [Header("Аниматоры окон (должны использовать один контроллер с состояниями Hidden, Show, Hide)")]
+    [SerializeField] private Animator pauseAnimator;
+    [SerializeField] private Animator gameOverAnimator;
+    #endregion
+
     #region Приватные поля
     private int score;
     private bool isGameOver = false;
@@ -90,6 +96,7 @@ public class GameManager : MonoBehaviour
         nextHeartThreshold = pointsForExtraHeart;
         UpdateHeartUI();
 
+        // Скрываем панели по умолчанию
         gameOverPanel?.SetActive(false);
         pauseMenu?.SetActive(false);
         gameplayUI?.SetActive(true);
@@ -235,7 +242,7 @@ public class GameManager : MonoBehaviour
             bestScoreTextUI.text = bestScore.ToString();
         }
         
-        // Отображаем дистанцию в виде целых чисел (в метрах) с использованием интерполяции строк (улучшение 8)
+        // Отображаем дистанцию в виде целых чисел (в метрах)
         if (gameOverDistanceTextUI != null)
         {
             int currentDistanceMeters = Mathf.RoundToInt(currentDistance);
@@ -268,7 +275,8 @@ public class GameManager : MonoBehaviour
         if (recordUpdated)
             PlayerPrefs.Save();
 
-        gameOverPanel?.SetActive(true);
+        // Запускаем анимацию появления панели GameOver
+        ShowGameOverPanel();
         AudioManager.Instance?.StopMusic();
         AudioManager.Instance?.PlayGameOverMusic();
     }
@@ -291,12 +299,21 @@ public class GameManager : MonoBehaviour
     public void TogglePause()
     {
         isPaused = !isPaused;
-        pauseMenu?.SetActive(isPaused);
 
-        // Скрываем или показываем основной UI в зависимости от состояния паузы
-        gameplayUI?.SetActive(!isPaused);
-
-        Time.timeScale = isPaused ? 0f : 1f;
+        if (isPaused)
+        {
+            // Показываем окно паузы с анимацией
+            ShowPauseMenu();
+            gameplayUI?.SetActive(false);
+            Time.timeScale = 0f;
+        }
+        else
+        {
+            // Скрываем окно паузы с анимацией
+            HidePauseMenu();
+            gameplayUI?.SetActive(true);
+            Time.timeScale = 1f;
+        }
     }
     #endregion
 
@@ -318,20 +335,19 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Логика возрождения
-
     private void UpdateReviveButtonColor(bool hasEnoughHearts)
-{
-    ColorBlock cb = reviveButton.colors;
-    float alpha = hasEnoughHearts ? 1f : 100f / 255f;
-    
-    cb.normalColor = new Color(cb.normalColor.r, cb.normalColor.g, cb.normalColor.b, alpha);
-    cb.highlightedColor = new Color(cb.highlightedColor.r, cb.highlightedColor.g, cb.highlightedColor.b, alpha);
-    cb.pressedColor = new Color(cb.pressedColor.r, cb.pressedColor.g, cb.pressedColor.b, alpha);
-    cb.selectedColor = new Color(cb.selectedColor.r, cb.selectedColor.g, cb.selectedColor.b, alpha);
-    cb.disabledColor = new Color(cb.disabledColor.r, cb.disabledColor.g, cb.disabledColor.b, alpha);
-    
-    reviveButton.colors = cb;
-}
+    {
+        ColorBlock cb = reviveButton.colors;
+        float alpha = hasEnoughHearts ? 1f : 100f / 255f;
+        
+        cb.normalColor = new Color(cb.normalColor.r, cb.normalColor.g, cb.normalColor.b, alpha);
+        cb.highlightedColor = new Color(cb.highlightedColor.r, cb.highlightedColor.g, cb.highlightedColor.b, alpha);
+        cb.pressedColor = new Color(cb.pressedColor.r, cb.pressedColor.g, cb.pressedColor.b, alpha);
+        cb.selectedColor = new Color(cb.selectedColor.r, cb.selectedColor.g, cb.selectedColor.b, alpha);
+        cb.disabledColor = new Color(cb.disabledColor.r, cb.disabledColor.g, cb.disabledColor.b, alpha);
+        
+        reviveButton.colors = cb;
+    }
 
     public void Revive()
     {
@@ -342,7 +358,8 @@ public class GameManager : MonoBehaviour
             UpdateReviveButtonColor(true);
             availableHearts -= currentReviveCost;
             reviveCount++;
-            gameOverPanel?.SetActive(false);
+            // Запускаем анимацию скрытия панели GameOver
+            HideGameOverPanel();
             gameplayUI?.SetActive(true);
             isGameOver = false;
             AudioManager.Instance?.StopGameOverMusic();
@@ -357,8 +374,6 @@ public class GameManager : MonoBehaviour
             ShowAdForHeart();
         }
     }
-
-    
 
     /// <summary>
     /// Вычисление текущей стоимости возрождения (улучшение 6)
@@ -423,6 +438,72 @@ public class GameManager : MonoBehaviour
     private void ShowAdForHeart()
     {
         Debug.Log("Показ рекламы для получения сердца");
+    }
+    #endregion
+
+    #region Анимация окон
+    // Методы для показа и скрытия окна паузы
+    public void ShowPauseMenu()
+    {
+        if (pauseMenu != null)
+        {
+            pauseMenu.SetActive(true);
+            if (pauseAnimator != null)
+            {
+                pauseAnimator.ResetTrigger("Hide");
+                pauseAnimator.SetTrigger("Show");
+            }
+        }
+    }
+
+    public void HidePauseMenu()
+    {
+        if (pauseAnimator != null)
+        {
+            pauseAnimator.ResetTrigger("Show");
+            pauseAnimator.SetTrigger("Hide");
+        }
+    }
+
+    // Этот метод вызывается в конце анимации Hide через Animation Event
+    public void OnPauseHideAnimationEnd()
+    {
+        if (pauseMenu != null)
+        {
+            pauseMenu.SetActive(false);
+        }
+    }
+
+    // Методы для показа и скрытия панели GameOver
+    public void ShowGameOverPanel()
+    {
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(true);
+            if (gameOverAnimator != null)
+            {
+                gameOverAnimator.ResetTrigger("Hide");
+                gameOverAnimator.SetTrigger("Show");
+            }
+        }
+    }
+
+    public void HideGameOverPanel()
+    {
+        if (gameOverAnimator != null)
+        {
+            gameOverAnimator.ResetTrigger("Show");
+            gameOverAnimator.SetTrigger("Hide");
+        }
+    }
+
+    // Этот метод вызывается в конце анимации Hide для панели GameOver через Animation Event
+    public void OnGameOverHideAnimationEnd()
+    {
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(false);
+        }
     }
     #endregion
 }
