@@ -158,3 +158,5 @@ MonoBehaviour:
   projectilePrefab: {fileID: 6024084205113082770, guid: 8b00a562d4b5c45f5b87d11e45396c69, type: 3}
   shootPoint: {fileID: 5704704143482279360}
   shootInterval: 2
+  minDistanceToPlayer: 5
+  player: {fileID: 1970302939685507801, guid: f624eb7d1bbdd44e0ba4a2a2751673c2, type: 3}

@@ -6,6 +6,8 @@ public class CactusShooter : MonoBehaviour
     public GameObject projectilePrefab; // Префаб снаряда
     public Transform shootPoint; // Точка спавна снаряда
     public float shootInterval = 2f; // Интервал между выстрелами
+    public float minDistanceToPlayer = 3f; // Минимальное расстояние до игрока, при котором кактус перестает стрелять
+    public Transform player; // Ссылка на объект игрока
 
     private Animator animator;
     private float shootTimer;
@@ -13,11 +15,17 @@ public class CactusShooter : MonoBehaviour
     void Start()
     {
         animator = GetComponent<Animator>();
-        shootTimer = shootInterval; // Начать с задержки
+        shootTimer = shootInterval; // Начинаем с задержки
     }
 
     void Update()
     {
+        // Если ссылка на игрока задана и игрок слишком близко, то стрельба отключается
+        if (player != null && Vector3.Distance(transform.position, player.position) < minDistanceToPlayer)
+        {
+            return;
+        }
+
         shootTimer -= Time.deltaTime;
         if (shootTimer <= 0f)
         {
@@ -28,10 +36,10 @@ public class CactusShooter : MonoBehaviour
 
     void Shoot()
     {
-        animator.SetTrigger("Shoot"); // Запускаем анимацию
+        animator.SetTrigger("Shoot"); // Запускаем анимацию стрельбы
     }
 
-    // Этот метод вызывается анимационным эвентом в момент выстрела
+    // Метод вызывается анимационным эвентом в момент выстрела
     public void SpawnProjectile()
     {
         if (projectilePrefab != null && shootPoint != null)

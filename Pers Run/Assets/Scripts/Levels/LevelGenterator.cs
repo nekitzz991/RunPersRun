@@ -9,15 +9,16 @@ public class LevelGenerator : MonoBehaviour
     [SerializeField] private int startingSpawnLevelParts = 3;
     
     [Header("Ссылки на объекты сцены")]
-    [SerializeField] private Transform startZone; // В объекте должна быть дочерняя точка "EndPoint"
+    [SerializeField] private Transform startZone; // Объект должен иметь дочернюю точку "EndPoint"
     [SerializeField] private List<Transform> levelPartPrefabs;
 
     private PersRunner player;  // Компонент игрока
     private Vector3 lastEndPosition;
     private LevelPartPool levelPartPool;
     
-    // Переменная для хранения индекса последнего выбранного префаба
-    private int lastPrefabIndex = -1;
+    // Переменные для перемешанного списка
+    private List<Transform> shuffledPrefabs;
+    private int currentIndex = 0;
 
     private void Awake()
     {
@@ -54,6 +55,9 @@ public class LevelGenerator : MonoBehaviour
             Debug.LogError("LevelPartPool не найден на сцене!");
             return;
         }
+        
+        // Инициализация перемешанного списка до спавна стартовых частей
+        ShufflePrefabs();
 
         // Генерация стартовых частей уровня
         for (int i = 0; i < startingSpawnLevelParts; i++)
@@ -62,7 +66,7 @@ public class LevelGenerator : MonoBehaviour
         }
     }
 
-    private void Start() 
+    private void Start()
     {
         StartCoroutine(CheckSpawnCondition());
     }
@@ -79,30 +83,35 @@ public class LevelGenerator : MonoBehaviour
         }
     }
 
+    // Метод перемешивания списка префабов (алгоритм Фишера-Йетса)
+    private void ShufflePrefabs()
+    {
+        shuffledPrefabs = new List<Transform>(levelPartPrefabs);
+        for (int i = 0; i < shuffledPrefabs.Count; i++)
+        {
+            int randomIndex = Random.Range(i, shuffledPrefabs.Count);
+            Transform temp = shuffledPrefabs[i];
+            shuffledPrefabs[i] = shuffledPrefabs[randomIndex];
+            shuffledPrefabs[randomIndex] = temp;
+        }
+        currentIndex = 0;
+    }
+
     private void SpawnLevelPart()
     {
-        int randomIndex = 0;
-        // Если в списке больше одного префаба, выбираем случайный индекс, не равный последнему выбранному
-        if (levelPartPrefabs.Count > 1)
+        // Если все зоны использованы, перемешиваем список заново
+        if (currentIndex >= shuffledPrefabs.Count)
         {
-            do
-            {
-                randomIndex = Random.Range(0, levelPartPrefabs.Count);
-            }
-            while (randomIndex == lastPrefabIndex);
+            ShufflePrefabs();
         }
-        else
-        {
-            randomIndex = 0;
-        }
-        lastPrefabIndex = randomIndex;
 
-        Transform chosenLevelPart = levelPartPrefabs[randomIndex];
+        Transform chosenLevelPart = shuffledPrefabs[currentIndex];
+        currentIndex++;
 
         // Получаем часть уровня из пула
         Transform newLevelPart = levelPartPool.GetLevelPart(chosenLevelPart, lastEndPosition, Quaternion.identity);
 
-        // Находим дочерний объект "EndPoint" в сгенерированной части
+        // Находим дочерний объект "EndPoint" для обновления позиции конца уровня
         Transform newEndPoint = newLevelPart.Find("EndPoint");
         if (newEndPoint != null)
         {
