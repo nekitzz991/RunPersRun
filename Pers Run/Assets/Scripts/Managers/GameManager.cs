@@ -252,6 +252,7 @@ public class GameManager : MonoBehaviour
         {
             reviveCostText.text = currentReviveCost.ToString();
         }
+        UpdateReviveButtonColor(availableHearts >= currentReviveCost);
 
         if (currentDistance > bestDistance)
         {
@@ -318,13 +319,20 @@ public class GameManager : MonoBehaviour
 
     #region Логика возрождения
 
-     private void UpdateReviveButtonColor(bool hasEnoughHearts)
-    {
-        Color color = reviveButton.image.color;
-        // Если хватает сердец — полная непрозрачность, иначе альфа = 100/255
-        color.a = hasEnoughHearts ? 1f : 100f / 255f;
-        reviveButton.image.color = color;
-    }
+    private void UpdateReviveButtonColor(bool hasEnoughHearts)
+{
+    ColorBlock cb = reviveButton.colors;
+    float alpha = hasEnoughHearts ? 1f : 100f / 255f;
+    
+    cb.normalColor = new Color(cb.normalColor.r, cb.normalColor.g, cb.normalColor.b, alpha);
+    cb.highlightedColor = new Color(cb.highlightedColor.r, cb.highlightedColor.g, cb.highlightedColor.b, alpha);
+    cb.pressedColor = new Color(cb.pressedColor.r, cb.pressedColor.g, cb.pressedColor.b, alpha);
+    cb.selectedColor = new Color(cb.selectedColor.r, cb.selectedColor.g, cb.selectedColor.b, alpha);
+    cb.disabledColor = new Color(cb.disabledColor.r, cb.disabledColor.g, cb.disabledColor.b, alpha);
+    
+    reviveButton.colors = cb;
+}
+
     public void Revive()
     {
         int currentReviveCost = GetCurrentReviveCost();
