@@ -7,7 +7,6 @@ public class MenuManager : MonoBehaviour
     [Header("UI Канвасы")]
     [SerializeField] private GameObject startScreenMenu;
     [SerializeField] private GameObject tutorialScreen;
-    [SerializeField] private GameObject achievementScreen; 
     [SerializeField] private GameObject CreditsScreen;
 
     [Header("Единый шрифт")]
@@ -19,7 +18,7 @@ public class MenuManager : MonoBehaviour
 
     private void Awake()
     {
-        if (startScreenMenu == null || tutorialScreen == null || achievementScreen == null)
+        if (startScreenMenu == null || tutorialScreen == null )
         {
             Debug.LogError("MenuManager: Не все UI-ссылки назначены в инспекторе!");
             enabled = false;
@@ -62,7 +61,6 @@ public class MenuManager : MonoBehaviour
         {
             startScreenMenu.SetActive(false);
             tutorialScreen.SetActive(false);
-            achievementScreen.SetActive(false);
             Time.timeScale = 1f;
         }
 
@@ -87,12 +85,6 @@ public class MenuManager : MonoBehaviour
         tutorialScreen.SetActive(true);
     }
     
-    public void OnAchievementButtonPressed()
-    {
-        startScreenMenu.SetActive(false);
-        achievementScreen.SetActive(true);
-    }
-
     public void OnCreditsButtonPressed()
     {
         startScreenMenu.SetActive(false);
@@ -104,13 +96,6 @@ public class MenuManager : MonoBehaviour
         tutorialScreen.SetActive(false);
         startScreenMenu.SetActive(true);
     }
-    
-    public void OnBackFromAchievementPressed()
-    {
-        achievementScreen.SetActive(false);
-        startScreenMenu.SetActive(true);
-    }
-
       public void OnBackFromCreditsPressed()
     {
         CreditsScreen.SetActive(false);
@@ -121,7 +106,6 @@ public class MenuManager : MonoBehaviour
     {
         startScreenMenu.SetActive(true);
         tutorialScreen.SetActive(false);
-        achievementScreen.SetActive(false);
     }
 
     public void SetGlobalFont(Font newFont)

@@ -1,0 +1,47 @@
+<svg width="102" height="103" viewBox="0 0 102 103" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M6.99999 102L95 102V96H102L102 7L95 7V7.62939e-06L7 0L7 7L3.89031e-06 7L0 96H6.99999L6.99999 102Z" fill="#F9D22B"/>
+<rect x="7" width="88" height="7" fill="#252840"/>
+<rect x="7" y="96" width="88" height="7" fill="#252840"/>
+<rect x="7" y="7" width="89" height="7" transform="rotate(90 7 7)" fill="#252840"/>
+<rect x="102" y="7" width="89" height="7" transform="rotate(90 102 7)" fill="#252840"/>
+<rect x="88" y="89" width="7" height="7" fill="#252840"/>
+<rect x="7" y="89" width="7" height="7" fill="#252840"/>
+<rect x="7" y="7" width="7" height="7" fill="#252840"/>
+<rect x="72" y="97" width="7" height="7" transform="rotate(-90 72 97)" fill="#252840"/>
+<rect width="7" height="7" transform="matrix(4.37114e-08 1 1 -4.37114e-08 14 46)" fill="#252840"/>
+<rect width="7" height="7" transform="matrix(4.37114e-08 1 1 -4.37114e-08 21 39)" fill="#252840"/>
+<rect width="7" height="7" transform="matrix(4.37114e-08 1 1 -4.37114e-08 21 53)" fill="#252840"/>
+<rect width="7" height="7" transform="matrix(4.37114e-08 1 1 -4.37114e-08 28 60)" fill="#252840"/>
+<rect width="7" height="7" transform="matrix(4.37114e-08 1 1 -4.37114e-08 28 32)" fill="#252840"/>
+<rect width="7" height="7" transform="matrix(4.37114e-08 1 1 -4.37114e-08 42 18)" fill="#252840"/>
+<rect width="7" height="7" transform="matrix(4.37114e-08 1 1 -4.37114e-08 81 46)" fill="#252840"/>
+<rect width="14" height="7" transform="matrix(4.37114e-08 1 1 -4.37114e-08 49 25)" fill="#252840"/>
+<rect width="14" height="7" transform="matrix(4.37114e-08 1 1 -4.37114e-08 49 60)" fill="#252840"/>
+<rect width="39" height="7" transform="matrix(1 -8.74228e-08 -8.74228e-08 -1 49 60)" fill="#252840"/>
+<rect width="39" height="7" transform="matrix(1 -8.74228e-08 -8.74228e-08 -1 49 46)" fill="#252840"/>
+<rect width="7" height="7" transform="matrix(4.37114e-08 1 1 -4.37114e-08 42 74)" fill="#252840"/>
+<rect width="7" height="7" transform="matrix(-1 0 0 1 42 67)" fill="#252840"/>
+<rect width="7" height="7" transform="matrix(-1 0 0 1 42 25)" fill="#252840"/>
+<rect x="14" y="7" width="7" height="7" fill="white"/>
+<rect x="14" y="89" width="7" height="7" fill="#EC9345"/>
+<rect x="7" y="82" width="7" height="7" fill="#EC9345"/>
+<rect x="21" y="89" width="7" height="7" fill="#EC9345"/>
+<rect x="28" y="89" width="7" height="7" fill="#EC9345"/>
+<rect x="35" y="89" width="7" height="7" fill="#EC9345"/>
+<rect x="42" y="89" width="7" height="7" fill="#EC9345"/>
+<rect x="49" y="89" width="7" height="7" fill="#EC9345"/>
+<rect x="56" y="89" width="7" height="7" fill="#EC9345"/>
+<rect x="63" y="89" width="7" height="7" fill="#EC9345"/>
+<rect x="70" y="89" width="7" height="7" fill="#EC9345"/>
+<rect x="77" y="89" width="7" height="7" fill="#EC9345"/>
+<rect x="81" y="89" width="7" height="7" fill="#EC9345"/>
+<rect x="88" y="82" width="7" height="7" fill="#EC9345"/>
+<rect x="88" y="75" width="7" height="7" fill="#FCE895"/>
+<rect x="81" y="82" width="7" height="7" fill="#FCE895"/>
+<rect x="74" y="82" width="7" height="7" fill="#FCE895"/>
+<rect x="7" y="14" width="7" height="7" fill="white"/>
+<rect x="21" y="7" width="7" height="7" fill="white"/>
+<rect x="28" y="7" width="7" height="7" fill="white"/>
+<rect x="35" y="7" width="7" height="7" fill="white"/>
+<rect x="88" y="7" width="7" height="7" fill="#252840"/>
+</svg>

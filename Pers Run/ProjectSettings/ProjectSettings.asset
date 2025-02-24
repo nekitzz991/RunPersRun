@@ -40,7 +40,7 @@ PlayerSettings:
     width: 1
     height: 1
   m_SplashScreenLogos: []
-  m_VirtualRealitySplashScreen: {fileID: 0}
+  m_VirtualRealitySplashScreen: {fileID: 2800000, guid: 621e43743ab974dc1bf12e5aea526be2, type: 3}
   m_HolographicTrackingLossScreen: {fileID: 0}
   defaultScreenWidth: 1920
   defaultScreenHeight: 1080
@@ -59,8 +59,8 @@ PlayerSettings:
   iosShowActivityIndicatorOnLoading: -1
   androidShowActivityIndicatorOnLoading: -1
   iosUseCustomAppBackgroundBehavior: 0
-  allowedAutorotateToPortrait: 1
-  allowedAutorotateToPortraitUpsideDown: 1
+  allowedAutorotateToPortrait: 0
+  allowedAutorotateToPortraitUpsideDown: 0
   allowedAutorotateToLandscapeRight: 1
   allowedAutorotateToLandscapeLeft: 1
   useOSAutorotation: 1
@@ -267,7 +267,7 @@ PlayerSettings:
   useCustomProguardFile: 0
   AndroidTargetArchitectures: 2
   AndroidSplashScreenScale: 0
-  androidSplashScreen: {fileID: 0}
+  androidSplashScreen: {fileID: 2800000, guid: 621e43743ab974dc1bf12e5aea526be2, type: 3}
   AndroidKeystoreName: 
   AndroidKeyaliasName: 
   AndroidEnableArmv9SecurityFeatures: 0
@@ -290,69 +290,111 @@ PlayerSettings:
   AndroidAppBundleSizeToValidate: 150
   AndroidReportGooglePlayAppDependencies: 1
   androidSymbolsSizeThreshold: 800
-  m_BuildTargetIcons: []
+  m_BuildTargetIcons:
+  - m_BuildTarget: Standalone
+    m_Icons:
+    - serializedVersion: 2
+      m_Icon: {fileID: 0}
+      m_Width: 1024
+      m_Height: 1024
+      m_Kind: 0
+    - serializedVersion: 2
+      m_Icon: {fileID: 2800000, guid: 57b366467b1804ddcaae75f35718afc9, type: 3}
+      m_Width: 512
+      m_Height: 512
+      m_Kind: 0
+    - serializedVersion: 2
+      m_Icon: {fileID: 0}
+      m_Width: 256
+      m_Height: 256
+      m_Kind: 0
+    - serializedVersion: 2
+      m_Icon: {fileID: 0}
+      m_Width: 128
+      m_Height: 128
+      m_Kind: 0
+    - serializedVersion: 2
+      m_Icon: {fileID: 0}
+      m_Width: 64
+      m_Height: 64
+      m_Kind: 0
+    - serializedVersion: 2
+      m_Icon: {fileID: 0}
+      m_Width: 48
+      m_Height: 48
+      m_Kind: 0
+    - serializedVersion: 2
+      m_Icon: {fileID: 0}
+      m_Width: 32
+      m_Height: 32
+      m_Kind: 0
+    - serializedVersion: 2
+      m_Icon: {fileID: 0}
+      m_Width: 16
+      m_Height: 16
+      m_Kind: 0
   m_BuildTargetPlatformIcons:
   - m_BuildTarget: Android
     m_Icons:
     - m_Textures: []
       m_Width: 192
       m_Height: 192
-      m_Kind: 1
+      m_Kind: 0
       m_SubKind: 
     - m_Textures: []
       m_Width: 144
       m_Height: 144
-      m_Kind: 1
+      m_Kind: 0
       m_SubKind: 
     - m_Textures: []
       m_Width: 96
       m_Height: 96
-      m_Kind: 1
+      m_Kind: 0
       m_SubKind: 
     - m_Textures: []
       m_Width: 72
       m_Height: 72
-      m_Kind: 1
+      m_Kind: 0
       m_SubKind: 
     - m_Textures: []
       m_Width: 48
       m_Height: 48
-      m_Kind: 1
+      m_Kind: 0
       m_SubKind: 
     - m_Textures: []
       m_Width: 36
       m_Height: 36
-      m_Kind: 1
+      m_Kind: 0
       m_SubKind: 
     - m_Textures: []
       m_Width: 192
       m_Height: 192
-      m_Kind: 0
+      m_Kind: 1
       m_SubKind: 
     - m_Textures: []
       m_Width: 144
       m_Height: 144
-      m_Kind: 0
+      m_Kind: 1
       m_SubKind: 
     - m_Textures: []
       m_Width: 96
       m_Height: 96
-      m_Kind: 0
+      m_Kind: 1
       m_SubKind: 
     - m_Textures: []
       m_Width: 72
       m_Height: 72
-      m_Kind: 0
+      m_Kind: 1
       m_SubKind: 
     - m_Textures: []
       m_Width: 48
       m_Height: 48
-      m_Kind: 0
+      m_Kind: 1
       m_SubKind: 
     - m_Textures: []
       m_Width: 36
       m_Height: 36
-      m_Kind: 0
+      m_Kind: 1
       m_SubKind: 
     - m_Textures: []
       m_Width: 432
@@ -386,31 +428,6 @@ PlayerSettings:
       m_SubKind: 
   - m_BuildTarget: iPhone
     m_Icons:
-    - m_Textures: []
-      m_Width: 180
-      m_Height: 180
-      m_Kind: 0
-      m_SubKind: iPhone
-    - m_Textures: []
-      m_Width: 120
-      m_Height: 120
-      m_Kind: 0
-      m_SubKind: iPhone
-    - m_Textures: []
-      m_Width: 167
-      m_Height: 167
-      m_Kind: 0
-      m_SubKind: iPad
-    - m_Textures: []
-      m_Width: 152
-      m_Height: 152
-      m_Kind: 0
-      m_SubKind: iPad
-    - m_Textures: []
-      m_Width: 76
-      m_Height: 76
-      m_Kind: 0
-      m_SubKind: iPad
     - m_Textures: []
       m_Width: 120
       m_Height: 120
@@ -481,6 +498,31 @@ PlayerSettings:
       m_Height: 1024
       m_Kind: 4
       m_SubKind: App Store
+    - m_Textures: []
+      m_Width: 180
+      m_Height: 180
+      m_Kind: 0
+      m_SubKind: iPhone
+    - m_Textures: []
+      m_Width: 120
+      m_Height: 120
+      m_Kind: 0
+      m_SubKind: iPhone
+    - m_Textures: []
+      m_Width: 167
+      m_Height: 167
+      m_Kind: 0
+      m_SubKind: iPad
+    - m_Textures: []
+      m_Width: 152
+      m_Height: 152
+      m_Kind: 0
+      m_SubKind: iPad
+    - m_Textures: []
+      m_Width: 76
+      m_Height: 76
+      m_Kind: 0
+      m_SubKind: iPad
   m_BuildTargetBatching: []
   m_BuildTargetShaderSettings: []
   m_BuildTargetGraphicsJobs:
@@ -773,8 +815,8 @@ PlayerSettings:
   ps4IncludedModules: []
   ps4attribVROutputEnabled: 0
   monoEnv: 
-  splashScreenBackgroundSourceLandscape: {fileID: 0}
-  splashScreenBackgroundSourcePortrait: {fileID: 0}
+  splashScreenBackgroundSourceLandscape: {fileID: 21300000, guid: 7a10614d189aa4b27828c820ed13d386, type: 3}
+  splashScreenBackgroundSourcePortrait: {fileID: 21300000, guid: 28ad6e5f83eff49f98a246197b3d0e09, type: 3}
   blurSplashScreenBackground: 1
   spritePackerPolicy: 
   webGLMemorySize: 32
@@ -785,7 +827,7 @@ PlayerSettings:
   webGLDebugSymbols: 0
   webGLEmscriptenArgs: 
   webGLModulesDirectory: 
-  webGLTemplate: PROJECT:YandexGames
+  webGLTemplate: APPLICATION:Default
   webGLAnalyzeBuildSize: 0
   webGLUseEmbeddedResources: 0
   webGLCompressionFormat: 0
@@ -806,6 +848,7 @@ PlayerSettings:
   webGLCloseOnQuit: 0
   webWasm2023: 0
   scriptingDefineSymbols:
+    Standalone: YG_PLUGIN_YANDEX_GAME
     WebGL: PLUGIN_YG_2;TMP_YG2;NJSON_YG2;RU_YG2;YG_PLUGIN_YANDEX_GAME;YandexGamesPlatform_yg;InterstitialAdv_yg;RewardedAdv_yg
   additionalCompilerArguments: {}
   platformArchitecture: {}
