@@ -382,7 +382,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: V 1.0.0
+  m_Text: V1.0.0
 --- !u!222 &162791452
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1035,6 +1035,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1425540650}
+        m_TargetAssemblyTypeName: AudioManager, Assembly-CSharp
+        m_MethodName: PlayButtonClickSound
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1477610166
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1057,7 +1069,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 3286163911610860551, guid: ea6582be2e5374e778253b73d65589be, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -1090,7 +1102,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 10, y: 187}
-  m_SizeDelta: {x: 425.00003, y: 102.09962}
+  m_SizeDelta: {x: 575, y: 102.09962}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!95 &1477610169
 Animator:
