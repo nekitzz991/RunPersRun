@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
             return;
         }
         Instance = this;
-        DontDestroyOnLoad(gameObject); // Сделаем объект постоянным между сценами
+        DontDestroyOnLoad(gameObject); // Объект сохраняется между сценами
     }
     #endregion
 
@@ -64,7 +64,7 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Ссылки на аниматоры окон
-    [Header("Аниматоры окон (должны использовать один контроллер с состояниями Hidden, Show, Hide)")]
+    [Header("Аниматоры окон (с контроллером состояний Hidden, Show, Hide)")]
     [SerializeField] private Animator pauseAnimator;
     [SerializeField] private Animator gameOverAnimator;
     #endregion
@@ -83,6 +83,9 @@ public class GameManager : MonoBehaviour
     private float bestDistance;
     private int bestScore;
     private Transform[] respawnPoints;
+
+    // Переменная для хранения последней пройденной контрольной точки
+    private Transform lastCheckpoint;
     #endregion
 
     #region Инициализация
@@ -142,10 +145,6 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Обновление UI
-
-    /// <summary>
-    /// Вспомогательный метод для обновления локализованного текста (улучшение 4)
-    /// </summary>
     private void UpdateLocalizedText(LocalizeStringEvent localizeEvent, object value)
     {
         if (localizeEvent != null)
@@ -220,11 +219,8 @@ public class GameManager : MonoBehaviour
     public void GameOver()
     {
         isGameOver = true;
-
-        // Скрываем основной UI при показе панели GameOver
         gameplayUI?.SetActive(false);
 
-        // Обновляем UI панели GameOver для текущего счета (с локализацией)
         if (currentScoreText != null)
         {
             currentScoreText.text = score.ToString();
@@ -242,7 +238,6 @@ public class GameManager : MonoBehaviour
             bestScoreTextUI.text = bestScore.ToString();
         }
         
-        // Отображаем дистанцию в виде целых чисел (в метрах)
         if (gameOverDistanceTextUI != null)
         {
             int currentDistanceMeters = Mathf.RoundToInt(currentDistance);
@@ -275,7 +270,6 @@ public class GameManager : MonoBehaviour
         if (recordUpdated)
             PlayerPrefs.Save();
 
-        // Запускаем анимацию появления панели GameOver
         ShowGameOverPanel();
         AudioManager.Instance?.StopMusic();
         AudioManager.Instance?.PlayGameOverMusic();
@@ -302,14 +296,12 @@ public class GameManager : MonoBehaviour
 
         if (isPaused)
         {
-            // Показываем окно паузы с анимацией
             ShowPauseMenu();
             gameplayUI?.SetActive(false);
             Time.timeScale = 0f;
         }
         else
         {
-            // Скрываем окно паузы с анимацией
             HidePauseMenu();
             gameplayUI?.SetActive(true);
             Time.timeScale = 1f;
@@ -334,7 +326,7 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
-    #region Логика возрождения
+    #region Логика возрождения и контрольных точек
     private void UpdateReviveButtonColor(bool hasEnoughHearts)
     {
         ColorBlock cb = reviveButton.colors;
@@ -354,11 +346,9 @@ public class GameManager : MonoBehaviour
         int currentReviveCost = GetCurrentReviveCost();
         if (availableHearts >= currentReviveCost)
         {
-            // Если достаточно сердец — обновляем цвет кнопки на нормальный и возрождаем игрока
             UpdateReviveButtonColor(true);
             availableHearts -= currentReviveCost;
             reviveCount++;
-            // Запускаем анимацию скрытия панели GameOver
             HideGameOverPanel();
             gameplayUI?.SetActive(true);
             isGameOver = false;
@@ -369,28 +359,30 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            // Если не хватает сердец — меняем альфа кнопки и можем показать рекламу
             UpdateReviveButtonColor(false);
             ShowAdForHeart();
         }
     }
 
-    /// <summary>
-    /// Вычисление текущей стоимости возрождения (улучшение 6)
-    /// </summary>
     private int GetCurrentReviveCost()
     {
         return Mathf.Min(reviveCount + 1, maxReviveCost);
     }
 
+    // Получение точки возрождения: если была пройдена контрольная точка – используем её
     private Transform GetLastRespawnPoint()
     {
+        if (lastCheckpoint != null)
+        {
+            return lastCheckpoint;
+        }
+
+        // Если контрольной точки нет, используем существующую логику
         if (respawnPoints != null && respawnPoints.Length > 0)
         {
             Transform lastPoint = null;
             foreach (Transform point in respawnPoints)
             {
-                // Пропускаем уничтожённые объекты
                 if (point == null)
                     continue;
 
@@ -403,7 +395,6 @@ public class GameManager : MonoBehaviour
                 return lastPoint;
         }
         
-        // Если массив respawnPoints пуст или все объекты уничтожены, ищем заново
         GameObject[] points = GameObject.FindGameObjectsWithTag("RespawnPoint");
         if (points.Length == 0)
             return null;
@@ -439,10 +430,16 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("Показ рекламы для получения сердца");
     }
+
+    // Метод для установки контрольной точки (вызывается из другого скрипта, например, Checkpoint)
+    public void SetCheckpoint(Transform checkpoint)
+    {
+        lastCheckpoint = checkpoint;
+        Debug.Log("Контрольная точка обновлена: " + checkpoint.position);
+    }
     #endregion
 
     #region Анимация окон
-    // Методы для показа и скрытия окна паузы
     public void ShowPauseMenu()
     {
         if (pauseMenu != null)
@@ -465,7 +462,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Этот метод вызывается в конце анимации Hide через Animation Event
     public void OnPauseHideAnimationEnd()
     {
         if (pauseMenu != null)
@@ -474,7 +470,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Методы для показа и скрытия панели GameOver
     public void ShowGameOverPanel()
     {
         if (gameOverPanel != null)
@@ -497,7 +492,6 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Этот метод вызывается в конце анимации Hide для панели GameOver через Animation Event
     public void OnGameOverHideAnimationEnd()
     {
         if (gameOverPanel != null)

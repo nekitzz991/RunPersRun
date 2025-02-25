@@ -121,6 +121,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8339214958504449533}
+  - component: {fileID: 7277302641523171386}
   m_Layer: 0
   m_Name: RespawnPoint
   m_TagString: RespawnPoint
@@ -143,6 +144,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 7226356236403598887}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7277302641523171386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2559011124566367580}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d042e7ec64214186a7d3acdd3bc6ca6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3896793550189845544
 GameObject:
   m_ObjectHideFlags: 0
@@ -344,7 +357,7 @@ Transform:
   m_GameObject: {fileID: 6297587794637050430}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 12, y: -2, z: 0}
+  m_LocalPosition: {x: 12, y: 1, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 1
   m_Children: []
