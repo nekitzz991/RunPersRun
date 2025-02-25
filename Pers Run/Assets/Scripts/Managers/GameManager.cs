@@ -82,10 +82,13 @@ public class GameManager : MonoBehaviour
     private float currentDistance;
     private float bestDistance;
     private int bestScore;
-    private Transform[] respawnPoints;
 
-    // Переменная для хранения последней пройденной контрольной точки
-    private Transform lastCheckpoint;
+    // Сохранённая начальная позиция игрока (fallback, если чекпоинт не установлен)
+    private Vector3 startPosition;
+
+    // Сохранённая позиция чекпоинта и флаг его наличия
+    private Vector3 lastCheckpointPosition;
+    private bool hasCheckpoint = false;
     #endregion
 
     #region Инициализация
@@ -107,20 +110,15 @@ public class GameManager : MonoBehaviour
         if (playerInstance == null)
             playerInstance = FindObjectOfType<PersRunner>();
         if (playerInstance != null)
+        {
+            startPosition = playerInstance.transform.position; // Сохраняем начальную позицию
             gameStartX = playerInstance.transform.position.x;
+        }
 
         currentDistance = 0f;
         bestDistance = PlayerPrefs.GetFloat(BEST_DISTANCE_KEY, 0f);
         bestScore = PlayerPrefs.GetInt(BEST_SCORE_KEY, 0);
         UpdateDistanceUI();
-
-        GameObject[] points = GameObject.FindGameObjectsWithTag("RespawnPoint");
-        if (points.Length > 0)
-        {
-            respawnPoints = new Transform[points.Length];
-            for (int i = 0; i < points.Length; i++)
-                respawnPoints[i] = points[i].transform;
-        }
     }
 
     private void OnDestroy()
@@ -369,42 +367,12 @@ public class GameManager : MonoBehaviour
         return Mathf.Min(reviveCount + 1, maxReviveCost);
     }
 
-    // Получение точки возрождения: если была пройдена контрольная точка – используем её
-    private Transform GetLastRespawnPoint()
+    // Получение позиции возрождения: если установлен чекпоинт – используем его, иначе возвращаем стартовую позицию
+    private Vector3 GetRespawnPosition()
     {
-        if (lastCheckpoint != null)
-        {
-            return lastCheckpoint;
-        }
-
-        // Если контрольной точки нет, используем существующую логику
-        if (respawnPoints != null && respawnPoints.Length > 0)
-        {
-            Transform lastPoint = null;
-            foreach (Transform point in respawnPoints)
-            {
-                if (point == null)
-                    continue;
-
-                if (lastPoint == null || point.position.x > lastPoint.position.x)
-                {
-                    lastPoint = point;
-                }
-            }
-            if (lastPoint != null)
-                return lastPoint;
-        }
-        
-        GameObject[] points = GameObject.FindGameObjectsWithTag("RespawnPoint");
-        if (points.Length == 0)
-            return null;
-        Transform lastFound = points[0].transform;
-        foreach (GameObject point in points)
-        {
-            if (point.transform.position.x > lastFound.position.x)
-                lastFound = point.transform;
-        }
-        return lastFound;
+        if (hasCheckpoint)
+            return lastCheckpointPosition;
+        return startPosition;
     }
 
     private void RevivePlayer()
@@ -416,12 +384,7 @@ public class GameManager : MonoBehaviour
                 return;
         }
 
-        Transform lastRespawnPoint = GetLastRespawnPoint();
-        if (lastRespawnPoint != null)
-            playerInstance.transform.position = lastRespawnPoint.position;
-        else
-            playerInstance.transform.position = Vector3.zero;
-
+        playerInstance.transform.position = GetRespawnPosition();
         playerInstance.gameObject.SetActive(true);
         playerInstance.Revive();
     }
@@ -434,8 +397,10 @@ public class GameManager : MonoBehaviour
     // Метод для установки контрольной точки (вызывается из другого скрипта, например, Checkpoint)
     public void SetCheckpoint(Transform checkpoint)
     {
-        lastCheckpoint = checkpoint;
-        Debug.Log("Контрольная точка обновлена: " + checkpoint.position);
+        // Сохраняем позицию чекпоинта и отмечаем, что он установлен
+        lastCheckpointPosition = checkpoint.position;
+        hasCheckpoint = true;
+        Debug.Log("Контрольная точка обновлена: " + lastCheckpointPosition);
     }
     #endregion
 
