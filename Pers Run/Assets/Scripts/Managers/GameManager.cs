@@ -218,6 +218,13 @@ public class GameManager : MonoBehaviour
     {
         isGameOver = true;
         gameplayUI?.SetActive(false);
+         if (playerInstance != null)
+    {
+        playerInstance.enabled = false;
+        Rigidbody2D rb = playerInstance.GetComponent<Rigidbody2D>();
+        if (rb != null)
+            rb.simulated = false;
+    }
 
         if (currentScoreText != null)
         {
@@ -350,6 +357,13 @@ public class GameManager : MonoBehaviour
             HideGameOverPanel();
             gameplayUI?.SetActive(true);
             isGameOver = false;
+            if (playerInstance != null)
+        {
+            playerInstance.enabled = true;
+            Rigidbody2D rb = playerInstance.GetComponent<Rigidbody2D>();
+            if (rb != null)
+                rb.simulated = true;
+        }
             AudioManager.Instance?.StopGameOverMusic();
             AudioManager.Instance?.PlayMusic();
             RevivePlayer();

@@ -36,11 +36,12 @@ public class PersRunner : MonoBehaviour
     rb.linearVelocity = new Vector2(speed, rb.linearVelocity.y);
     isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
 
-    if (Input.GetMouseButtonDown(0) && isGrounded && !EventSystem.current.IsPointerOverGameObject())
-    {
-        rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-        AudioManager.Instance.PlaySFXSound(jumpSound, 0.2f);
-    }
+    if ((Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space)) && isGrounded && !EventSystem.current.IsPointerOverGameObject())
+{
+    rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+    AudioManager.Instance.PlaySFXSound(jumpSound, 0.2f);
+}
+
 
     animator.SetBool("IsRunning", rb.linearVelocity.x > 0);
     animator.SetBool("IsJumping", !isGrounded);
