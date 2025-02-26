@@ -4,6 +4,9 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Components;
+using YG;
+using System.Collections;
+
 
 public class GameManager : MonoBehaviour
 {
@@ -119,11 +122,13 @@ public class GameManager : MonoBehaviour
         bestDistance = PlayerPrefs.GetFloat(BEST_DISTANCE_KEY, 0f);
         bestScore = PlayerPrefs.GetInt(BEST_SCORE_KEY, 0);
         UpdateDistanceUI();
+        YandexGame.RewardVideoEvent += OnRewardedAdCompleted;
     }
 
     private void OnDestroy()
     {
         OnScoreChanged -= UpdateScoreUI;
+        YandexGame.RewardVideoEvent -= OnRewardedAdCompleted;
     }
     #endregion
 
@@ -332,19 +337,73 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Логика возрождения и контрольных точек
-    private void UpdateReviveButtonColor(bool hasEnoughHearts)
+   private Coroutine reviveButtonBlinkCoroutine;
+
+private void UpdateReviveButtonColor(bool hasEnoughHearts)
+{
+    if (hasEnoughHearts)
     {
-        ColorBlock cb = reviveButton.colors;
-        float alpha = hasEnoughHearts ? 1f : 100f / 255f;
-        
-        cb.normalColor = new Color(cb.normalColor.r, cb.normalColor.g, cb.normalColor.b, alpha);
-        cb.highlightedColor = new Color(cb.highlightedColor.r, cb.highlightedColor.g, cb.highlightedColor.b, alpha);
-        cb.pressedColor = new Color(cb.pressedColor.r, cb.pressedColor.g, cb.pressedColor.b, alpha);
-        cb.selectedColor = new Color(cb.selectedColor.r, cb.selectedColor.g, cb.selectedColor.b, alpha);
-        cb.disabledColor = new Color(cb.disabledColor.r, cb.disabledColor.g, cb.disabledColor.b, alpha);
-        
-        reviveButton.colors = cb;
+        // Если сердец достаточно, останавливаем мигание (если оно было) и выставляем полную непрозрачность.
+        if (reviveButtonBlinkCoroutine != null)
+        {
+            StopCoroutine(reviveButtonBlinkCoroutine);
+            reviveButtonBlinkCoroutine = null;
+        }
+        SetButtonAlpha(1f);
     }
+    else
+    {
+        // Если сердец недостаточно и корутина не запущена, запускаем её для мигания.
+        if (reviveButtonBlinkCoroutine == null)
+        {
+            reviveButtonBlinkCoroutine = StartCoroutine(BlinkButton());
+        }
+    }
+}
+
+private IEnumerator BlinkButton()
+{
+    // Задаём диапазон значений альфа (например, от 100/255 до 1)
+    float minAlpha = 100f / 255f; // примерно 0.392
+    float maxAlpha = 1f;
+    float duration = 1f; // время на один цикл (плавное появление и исчезание)
+    
+    while (true)
+    {
+        // Плавное увеличение прозрачности
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            float t = elapsed / duration;
+            float alpha = Mathf.Lerp(minAlpha, maxAlpha, t);
+            SetButtonAlpha(alpha);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        // Плавное уменьшение прозрачности
+        elapsed = 0f;
+        while (elapsed < duration)
+        {
+            float t = elapsed / duration;
+            float alpha = Mathf.Lerp(maxAlpha, minAlpha, t);
+            SetButtonAlpha(alpha);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+    }
+}
+
+private void SetButtonAlpha(float alpha)
+{
+    ColorBlock cb = reviveButton.colors;
+    cb.normalColor = new Color(cb.normalColor.r, cb.normalColor.g, cb.normalColor.b, alpha);
+    cb.highlightedColor = new Color(cb.highlightedColor.r, cb.highlightedColor.g, cb.highlightedColor.b, alpha);
+    cb.pressedColor = new Color(cb.pressedColor.r, cb.pressedColor.g, cb.pressedColor.b, alpha);
+    cb.selectedColor = new Color(cb.selectedColor.r, cb.selectedColor.g, cb.selectedColor.b, alpha);
+    cb.disabledColor = new Color(cb.disabledColor.r, cb.disabledColor.g, cb.disabledColor.b, alpha);
+    reviveButton.colors = cb;
+}
+
 
     public void Revive()
     {
@@ -373,6 +432,22 @@ public class GameManager : MonoBehaviour
         {
             UpdateReviveButtonColor(false);
             ShowAdForHeart();
+        }
+    }
+    private void OnRewardedAdCompleted(int adId)
+    {
+        if (adId == 2)
+        {
+            availableHearts++;
+            UpdateHeartUI();
+            Debug.Log("Награда получена: добавлено 1 сердце");
+            if (gameOverPanel != null && gameOverPanel.activeSelf && heartsCountGameOverText != null)
+            {
+                heartsCountGameOverText.text = availableHearts.ToString();
+            }
+            int currentReviveCost = GetCurrentReviveCost();
+            bool hasEnoughHearts = availableHearts >= currentReviveCost;
+            UpdateReviveButtonColor(hasEnoughHearts);
         }
     }
 
@@ -406,6 +481,8 @@ public class GameManager : MonoBehaviour
     private void ShowAdForHeart()
     {
         Debug.Log("Показ рекламы для получения сердца");
+        YandexGame.RewVideoShow(2);
+
     }
 
     // Метод для установки контрольной точки (вызывается из другого скрипта, например, Checkpoint)
