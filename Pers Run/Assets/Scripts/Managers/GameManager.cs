@@ -116,9 +116,15 @@ public class GameManager : MonoBehaviour
         }
 
         currentDistance = 0f;
-        bestDistance = PlayerPrefs.GetFloat(BEST_DISTANCE_KEY, 0f);
-        bestScore = PlayerPrefs.GetInt(BEST_SCORE_KEY, 0);
+        // Загружаем сохранённые лучшие показатели, если они есть
+        if (PlayerPrefs.HasKey(BEST_DISTANCE_KEY))
+            bestDistance = PlayerPrefs.GetFloat(BEST_DISTANCE_KEY);
+        if (PlayerPrefs.HasKey(BEST_SCORE_KEY))
+            bestScore = PlayerPrefs.GetInt(BEST_SCORE_KEY);
         UpdateDistanceUI();
+
+        // Периодически сохраняем данные (каждые 5 секунд) – это поможет сохранить прогресс при обновлении страницы
+        InvokeRepeating("SaveProgress", 5f, 5f);
     }
 
     private void OnDestroy()
@@ -142,21 +148,16 @@ public class GameManager : MonoBehaviour
     }
 
     private void OnApplicationFocus(bool hasFocus)
-{
-    if (!hasFocus)
     {
-        PlayerPrefs.Save();
+        if (!hasFocus)
+            PlayerPrefs.Save();
     }
-}
 
-private void OnApplicationPause(bool pauseStatus)
-{
-    if (pauseStatus)
+    private void OnApplicationPause(bool pauseStatus)
     {
-        PlayerPrefs.Save();
+        if (pauseStatus)
+            PlayerPrefs.Save();
     }
-}
-
     #endregion
 
     #region Обновление UI
@@ -176,6 +177,13 @@ private void OnApplicationPause(bool pauseStatus)
 
         UpdateLocalizedText(currentDistanceLocalizeEvent, currentDistanceMeters);
         UpdateLocalizedText(bestDistanceLocalizeEvent, bestDistanceMeters);
+
+        // Если достигнута новая лучшая дистанция, обновляем и сохраняем
+        if (currentDistance > bestDistance)
+        {
+            bestDistance = currentDistance;
+            PlayerPrefs.SetFloat(BEST_DISTANCE_KEY, bestDistance);
+        }
     }
 
     private void UpdateScoreUI(int newScore)
@@ -220,6 +228,13 @@ private void OnApplicationPause(bool pauseStatus)
                 nextHeartThreshold += pointsForExtraHeart;
             }
             UpdateHeartUI();
+
+            // Если достигнут новый лучший счёт, обновляем и сохраняем
+            if (score > bestScore)
+            {
+                bestScore = score;
+                PlayerPrefs.SetInt(BEST_SCORE_KEY, bestScore);
+            }
         }
     }
 
@@ -235,31 +250,20 @@ private void OnApplicationPause(bool pauseStatus)
     {
         isGameOver = true;
         gameplayUI?.SetActive(false);
-         if (playerInstance != null)
-    {
-        playerInstance.enabled = false;
-        Rigidbody2D rb = playerInstance.GetComponent<Rigidbody2D>();
-        if (rb != null)
-            rb.simulated = false;
-    }
+        if (playerInstance != null)
+        {
+            playerInstance.enabled = false;
+            Rigidbody2D rb = playerInstance.GetComponent<Rigidbody2D>();
+            if (rb != null)
+                rb.simulated = false;
+        }
 
         if (currentScoreText != null)
-        {
             currentScoreText.text = score.ToString();
-        }
 
-        bool recordUpdated = false;
-        if (Score > bestScore)
-        {
-            bestScore = Score;
-            PlayerPrefs.SetInt(BEST_SCORE_KEY, bestScore);
-            recordUpdated = true;
-        }
         if (bestScoreTextUI != null)
-        {
             bestScoreTextUI.text = bestScore.ToString();
-        }
-        
+
         if (gameOverDistanceTextUI != null)
         {
             int currentDistanceMeters = Mathf.RoundToInt(currentDistance);
@@ -270,31 +274,21 @@ private void OnApplicationPause(bool pauseStatus)
             int bestDistanceMeters = Mathf.RoundToInt(bestDistance);
             bestDistanceGameOverTextUI.text = $"{bestDistanceMeters} m";
         }
-        
+
         int currentReviveCost = GetCurrentReviveCost();
         if (reviveCostText != null)
-        {
             reviveCostText.text = currentReviveCost.ToString();
-        }
         UpdateReviveButtonColor(availableHearts >= currentReviveCost);
 
-        if (currentDistance > bestDistance)
-        {
-            bestDistance = currentDistance;
-            PlayerPrefs.SetFloat(BEST_DISTANCE_KEY, bestDistance);
-            recordUpdated = true;
-        }
         if (heartsCountGameOverText != null)
-        {
             heartsCountGameOverText.text = availableHearts.ToString();
-        }
-
-        if (recordUpdated)
-            PlayerPrefs.Save();
 
         ShowGameOverPanel();
         AudioManager.Instance?.StopMusic();
         AudioManager.Instance?.PlayGameOverMusic();
+
+        // Сохраняем сразу перед выходом из игры
+        PlayerPrefs.Save();
     }
 
     public void RestartGame()
@@ -353,13 +347,13 @@ private void OnApplicationPause(bool pauseStatus)
     {
         ColorBlock cb = reviveButton.colors;
         float alpha = hasEnoughHearts ? 1f : 100f / 255f;
-        
+
         cb.normalColor = new Color(cb.normalColor.r, cb.normalColor.g, cb.normalColor.b, alpha);
         cb.highlightedColor = new Color(cb.highlightedColor.r, cb.highlightedColor.g, cb.highlightedColor.b, alpha);
         cb.pressedColor = new Color(cb.pressedColor.r, cb.pressedColor.g, cb.pressedColor.b, alpha);
         cb.selectedColor = new Color(cb.selectedColor.r, cb.selectedColor.g, cb.selectedColor.b, alpha);
         cb.disabledColor = new Color(cb.disabledColor.r, cb.disabledColor.g, cb.disabledColor.b, alpha);
-        
+
         reviveButton.colors = cb;
     }
 
@@ -375,12 +369,12 @@ private void OnApplicationPause(bool pauseStatus)
             gameplayUI?.SetActive(true);
             isGameOver = false;
             if (playerInstance != null)
-        {
-            playerInstance.enabled = true;
-            Rigidbody2D rb = playerInstance.GetComponent<Rigidbody2D>();
-            if (rb != null)
-                rb.simulated = true;
-        }
+            {
+                playerInstance.enabled = true;
+                Rigidbody2D rb = playerInstance.GetComponent<Rigidbody2D>();
+                if (rb != null)
+                    rb.simulated = true;
+            }
             AudioManager.Instance?.StopGameOverMusic();
             AudioManager.Instance?.PlayMusic();
             RevivePlayer();
@@ -398,12 +392,9 @@ private void OnApplicationPause(bool pauseStatus)
         return Mathf.Min(reviveCount + 1, maxReviveCost);
     }
 
-    // Получение позиции возрождения: если установлен чекпоинт – используем его, иначе возвращаем стартовую позицию
     private Vector3 GetRespawnPosition()
     {
-        if (hasCheckpoint)
-            return lastCheckpointPosition;
-        return startPosition;
+        return hasCheckpoint ? lastCheckpointPosition : startPosition;
     }
 
     private void RevivePlayer()
@@ -425,10 +416,8 @@ private void OnApplicationPause(bool pauseStatus)
         Debug.Log("Показ рекламы для получения сердца");
     }
 
-    // Метод для установки контрольной точки (вызывается из другого скрипта, например, Checkpoint)
     public void SetCheckpoint(Transform checkpoint)
     {
-        // Сохраняем позицию чекпоинта и отмечаем, что он установлен
         lastCheckpointPosition = checkpoint.position;
         hasCheckpoint = true;
         Debug.Log("Контрольная точка обновлена: " + lastCheckpointPosition);
@@ -461,9 +450,7 @@ private void OnApplicationPause(bool pauseStatus)
     public void OnPauseHideAnimationEnd()
     {
         if (pauseMenu != null)
-        {
             pauseMenu.SetActive(false);
-        }
     }
 
     public void ShowGameOverPanel()
@@ -491,9 +478,21 @@ private void OnApplicationPause(bool pauseStatus)
     public void OnGameOverHideAnimationEnd()
     {
         if (gameOverPanel != null)
-        {
             gameOverPanel.SetActive(false);
-        }
+    }
+    #endregion
+
+    #region Дополнительные методы
+    // Периодически сохраняем данные (вызывается каждые 5 секунд)
+    private void SaveProgress()
+    {
+        PlayerPrefs.Save();
+    }
+
+    // Этот метод можно вызвать из JavaScript (например, через событие onbeforeunload)
+    public void OnBeforeUnload()
+    {
+        PlayerPrefs.Save();
     }
     #endregion
 }
