@@ -145,6 +145,22 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+    private void OnApplicationFocus(bool hasFocus)
+{
+    if (!hasFocus)
+    {
+        PlayerPrefs.Save();
+    }
+}
+
+private void OnApplicationPause(bool pauseStatus)
+{
+    if (pauseStatus)
+    {
+        PlayerPrefs.Save();
+    }
+}
+
     #endregion
 
     #region Обновление UI
