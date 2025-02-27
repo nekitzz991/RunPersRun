@@ -3,7 +3,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.Localization;
-using UnityEngine.Localization.Settings;
 
 public class LoadingScene : MonoBehaviour
 { 
