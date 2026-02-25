@@ -108,7 +108,7 @@ public class GameManager : MonoBehaviour
         gameplayUI?.SetActive(true);
 
         if (playerInstance == null)
-            playerInstance = FindObjectOfType<PersRunner>();
+            playerInstance = FindFirstObjectByType<PersRunner>();
         if (playerInstance != null)
         {
             startPosition = playerInstance.transform.position; // Сохраняем начальную позицию
@@ -401,7 +401,7 @@ public class GameManager : MonoBehaviour
     {
         if (playerInstance == null)
         {
-            playerInstance = FindObjectOfType<PersRunner>();
+            playerInstance = FindFirstObjectByType<PersRunner>();
             if (playerInstance == null)
                 return;
         }

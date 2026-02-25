@@ -127,7 +127,7 @@ public class MenuManager : MonoBehaviour
             Debug.LogWarning("Глобальный шрифт не установлен.");
             return;
         }
-        Text[] allTexts = FindObjectsOfType<Text>();
+        Text[] allTexts = FindObjectsByType<Text>(FindObjectsSortMode.None);
         foreach (Text text in allTexts)
         {
             text.font = globalFont;

@@ -34,7 +34,7 @@ public class LevelGenerator : MonoBehaviour
             return;
         }
 
-        player = FindObjectOfType<PersRunner>();
+        player = FindFirstObjectByType<PersRunner>();
         if (player == null)
         {
             Debug.LogError("Компонент PersRunner не найден на сцене!");
@@ -49,7 +49,7 @@ public class LevelGenerator : MonoBehaviour
         }
         lastEndPosition = endPoint.position;
 
-        levelPartPool = FindObjectOfType<LevelPartPool>();
+        levelPartPool = FindFirstObjectByType<LevelPartPool>();
         if (levelPartPool == null)
         {
             Debug.LogError("LevelPartPool не найден на сцене!");
