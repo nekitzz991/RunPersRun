@@ -17,8 +17,15 @@ public class AudioManager : MonoBehaviour
             return;
         }
         Instance = this;
-        // Если требуется сохранять AudioManager между сценами, раскомментируйте следующую строку:
-        // DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(gameObject);
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
     }
 
     #endregion
@@ -75,10 +82,14 @@ public class AudioManager : MonoBehaviour
             sfxSource.PlayOneShot(buttonClickSound);
     }
 
-   public void PlaySFXSound(AudioClip clip, float volume = 1f)
-{
-    sfxSource.PlayOneShot(clip, volume);
-}
+    public void PlaySFXSound(AudioClip clip, float volume = 1f)
+    {
+        if (isSFXMuted || clip == null || sfxSource == null)
+        {
+            return;
+        }
+        sfxSource.PlayOneShot(clip, volume);
+    }
 
 
 
@@ -124,7 +135,7 @@ public class AudioManager : MonoBehaviour
     /// </summary>
     public void PlayMusic()
     {
-        if (!isMusicMuted && musicSource != null)
+        if (!isMusicMuted && musicSource != null && !musicSource.isPlaying)
             musicSource.Play();
     }
 
@@ -142,7 +153,7 @@ public class AudioManager : MonoBehaviour
     /// </summary>
     public void PlayGameOverMusic()
     {
-        if (!isMusicMuted && gameOverMusicSource != null)
+        if (!isMusicMuted && gameOverMusicSource != null && !gameOverMusicSource.isPlaying)
             gameOverMusicSource.Play();
     }
 
@@ -152,8 +163,8 @@ public class AudioManager : MonoBehaviour
 
     private void LoadAudioSettings()
     {
-        isMusicMuted = PlayerPrefs.GetInt(MUSIC_MUTED_KEY, 0) == 1;
-        isSFXMuted = PlayerPrefs.GetInt(SFX_MUTED_KEY, 0) == 1;
+        isMusicMuted = SaveService.GetInt(MUSIC_MUTED_KEY, 0) == 1;
+        isSFXMuted = SaveService.GetInt(SFX_MUTED_KEY, 0) == 1;
 
         if (musicSource != null)
             musicSource.mute = isMusicMuted;
@@ -170,9 +181,9 @@ public class AudioManager : MonoBehaviour
 
     private void SaveAudioSettings()
     {
-        PlayerPrefs.SetInt(MUSIC_MUTED_KEY, isMusicMuted ? 1 : 0);
-        PlayerPrefs.SetInt(SFX_MUTED_KEY, isSFXMuted ? 1 : 0);
-        PlayerPrefs.Save();
+        SaveService.SetInt(MUSIC_MUTED_KEY, isMusicMuted ? 1 : 0);
+        SaveService.SetInt(SFX_MUTED_KEY, isSFXMuted ? 1 : 0);
+        SaveService.SaveNow();
     }
 
     #endregion

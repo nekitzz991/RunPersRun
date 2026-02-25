@@ -24,7 +24,7 @@ public class Mushroom : MonoBehaviour
                 }
 
                 // Воспроизводим звук
-               AudioManager.Instance.PlaySFXSound(bounceSound);
+                AudioManager.Instance?.PlaySFXSound(bounceSound);
             }
         }
     }

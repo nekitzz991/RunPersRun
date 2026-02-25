@@ -1,6 +1,6 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using System.Collections;
 
 public class MenuManager : MonoBehaviour
 {
@@ -28,9 +28,9 @@ public class MenuManager : MonoBehaviour
 
     private void Start()
     {
-        if (PlayerPrefs.HasKey(selectedFontKey))
+        if (SaveService.HasKey(selectedFontKey))
         {
-            string fontName = PlayerPrefs.GetString(selectedFontKey);
+            string fontName = SaveService.GetString(selectedFontKey);
             Font loadedFont = Resources.Load<Font>(fontName);
             if (loadedFont != null)
             {
@@ -46,8 +46,7 @@ public class MenuManager : MonoBehaviour
         {
             if (globalFont != null)
             {
-                PlayerPrefs.SetString(selectedFontKey, globalFont.name);
-                PlayerPrefs.Save();
+                SaveService.SetString(selectedFontKey, globalFont.name, true);
                 Debug.Log("Сохранён шрифт по умолчанию: " + globalFont.name);
             }
         }
@@ -76,6 +75,7 @@ public class MenuManager : MonoBehaviour
     {
         hasGameStarted = true;
         startScreenMenu.SetActive(false);
+        FocusFirstSelectable(null);
         Time.timeScale = 1f;
     }
     
@@ -83,29 +83,35 @@ public class MenuManager : MonoBehaviour
     {
         startScreenMenu.SetActive(false);
         tutorialScreen.SetActive(true);
+        FocusFirstSelectable(tutorialScreen);
     }
     
     public void OnCreditsButtonPressed()
     {
         startScreenMenu.SetActive(false);
         CreditsScreen.SetActive(true);
+        FocusFirstSelectable(CreditsScreen);
     }
     
     public void OnBackFromTutorialPressed()
     {
         tutorialScreen.SetActive(false);
         startScreenMenu.SetActive(true);
+        FocusFirstSelectable(startScreenMenu);
     }
-      public void OnBackFromCreditsPressed()
+    public void OnBackFromCreditsPressed()
     {
         CreditsScreen.SetActive(false);
         startScreenMenu.SetActive(true);
+        FocusFirstSelectable(startScreenMenu);
     }
     
     public void ShowStartScreen()
     {
         startScreenMenu.SetActive(true);
         tutorialScreen.SetActive(false);
+        CreditsScreen?.SetActive(false);
+        FocusFirstSelectable(startScreenMenu);
     }
 
     public void SetGlobalFont(Font newFont)
@@ -113,8 +119,7 @@ public class MenuManager : MonoBehaviour
         if (newFont != null)
         {
             globalFont = newFont;
-            PlayerPrefs.SetString(selectedFontKey, newFont.name);
-            PlayerPrefs.Save();
+            SaveService.SetString(selectedFontKey, newFont.name, true);
             ApplyGlobalFont();
             Debug.Log("Установлен глобальный шрифт: " + newFont.name);
         }
@@ -134,5 +139,33 @@ public class MenuManager : MonoBehaviour
         }
 
         Debug.Log("Глобальный шрифт применён ко всем UI Text элементам.");
+    }
+
+    private void FocusFirstSelectable(GameObject root)
+    {
+        if (EventSystem.current == null)
+        {
+            return;
+        }
+
+        if (root == null)
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+            return;
+        }
+
+        var selectables = root.GetComponentsInChildren<Selectable>(true);
+        for (int i = 0; i < selectables.Length; i++)
+        {
+            if (!selectables[i].interactable || !selectables[i].gameObject.activeInHierarchy)
+            {
+                continue;
+            }
+
+            EventSystem.current.SetSelectedGameObject(selectables[i].gameObject);
+            return;
+        }
+
+        EventSystem.current.SetSelectedGameObject(null);
     }
 }

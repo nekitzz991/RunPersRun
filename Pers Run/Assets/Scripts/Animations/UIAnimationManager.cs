@@ -13,33 +13,60 @@ public class UIAnimationManager : MonoBehaviour
     }
 
     public AnimatedUIElement[] elements; // Массив анимируемых элементов
+    private readonly System.Collections.Generic.List<Coroutine> runningCoroutines = new();
 
-    private void Start()
+    private void OnEnable()
     {
+        StartAnimations();
+    }
+
+    private void OnDisable()
+    {
+        StopAnimations();
+    }
+
+    private void StartAnimations()
+    {
+        StopAnimations();
+
+        if (elements == null)
+        {
+            return;
+        }
+
         foreach (var element in elements)
         {
-            StartCoroutine(AnimateElement(element));
+            if (element == null || element.imageComponent == null || element.frames == null || element.frames.Length == 0)
+            {
+                continue;
+            }
+
+            runningCoroutines.Add(StartCoroutine(AnimateElement(element)));
         }
     }
 
-    private void OnEnable()
-{
-    foreach (var element in elements)
+    private void StopAnimations()
     {
-        StartCoroutine(AnimateElement(element));
+        for (int i = 0; i < runningCoroutines.Count; i++)
+        {
+            if (runningCoroutines[i] != null)
+            {
+                StopCoroutine(runningCoroutines[i]);
+            }
+        }
+        runningCoroutines.Clear();
     }
-}
 
-
-   private IEnumerator AnimateElement(AnimatedUIElement element)
-{
-    int frameIndex = 0;
-    while (true)
+    private IEnumerator AnimateElement(AnimatedUIElement element)
     {
-        element.imageComponent.sprite = element.frames[frameIndex];
-        frameIndex = (frameIndex + 1) % element.frames.Length;
-        yield return new WaitForSecondsRealtime(element.frameRate); // Работает вне зависимости от Time.timeScale
-    }
-}
+        int frameIndex = 0;
+        float frameDelay = Mathf.Max(0.01f, element.frameRate);
 
+        while (true)
+        {
+            element.imageComponent.sprite = element.frames[frameIndex];
+            frameIndex = (frameIndex + 1) % element.frames.Length;
+            yield return new WaitForSecondsRealtime(frameDelay);
+        }
+    }
 }

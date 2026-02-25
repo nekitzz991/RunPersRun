@@ -3,25 +3,38 @@ using UnityEngine;
 public class CactusShooter : MonoBehaviour
 {
     [Header("Shooting Settings")]
-    public GameObject projectilePrefab; // Префаб снаряда
-    public Transform shootPoint; // Точка спавна снаряда
-    public float shootInterval = 2f; // Интервал между выстрелами
-    public float minDistanceToPlayer = 3f; // Минимальное расстояние до игрока, при котором кактус перестает стрелять
-    public Transform player; // Ссылка на объект игрока
+    [SerializeField] private GameObject projectilePrefab;
+    [SerializeField] private Transform shootPoint;
+    [SerializeField] private float shootInterval = 2f;
+    [SerializeField] private float minDistanceToPlayer = 3f;
+    [SerializeField] private Transform player;
+    [SerializeField] private bool autoFindPlayer = true;
 
     private Animator animator;
     private float shootTimer;
 
-    void Start()
+    private void Start()
     {
         animator = GetComponent<Animator>();
-        shootTimer = shootInterval; // Начинаем с задержки
+        ResolvePlayerReference();
+        shootTimer = shootInterval;
     }
 
-    void Update()
+    private void OnEnable()
     {
-        // Если ссылка на игрока задана и игрок слишком близко, то стрельба отключается
-        if (player != null && Vector3.Distance(transform.position, player.position) < minDistanceToPlayer)
+        shootTimer = shootInterval;
+        ResolvePlayerReference();
+    }
+
+    private void Update()
+    {
+        if (projectilePrefab == null || shootPoint == null)
+        {
+            return;
+        }
+
+        ResolvePlayerReference();
+        if (player != null && Mathf.Abs(transform.position.x - player.position.x) < minDistanceToPlayer)
         {
             return;
         }
@@ -34,17 +47,39 @@ public class CactusShooter : MonoBehaviour
         }
     }
 
-    void Shoot()
+    private void ResolvePlayerReference()
     {
-        animator.SetTrigger("Shoot"); // Запускаем анимацию стрельбы
+        if (!autoFindPlayer || player != null)
+        {
+            return;
+        }
+
+        var runner = FindFirstObjectByType<PersRunner>();
+        if (runner != null)
+        {
+            player = runner.transform;
+        }
     }
 
-    // Метод вызывается анимационным эвентом в момент выстрела
+    private void Shoot()
+    {
+        if (animator != null)
+        {
+            animator.SetTrigger("Shoot");
+            return;
+        }
+
+        SpawnProjectile();
+    }
+
+    // Метод вызывается анимационным эвентом в момент выстрела.
     public void SpawnProjectile()
     {
-        if (projectilePrefab != null && shootPoint != null)
+        if (projectilePrefab == null || shootPoint == null)
         {
-            Instantiate(projectilePrefab, shootPoint.position, Quaternion.identity);
+            return;
         }
+
+        ProjectilePool.Instance.Spawn(projectilePrefab, shootPoint.position, Quaternion.identity);
     }
 }

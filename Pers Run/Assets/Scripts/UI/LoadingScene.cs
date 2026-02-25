@@ -1,15 +1,18 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.Localization;
-using UnityEngine.Localization.Settings;
 
 public class LoadingScene : MonoBehaviour
 { 
     public Image loadingCircleBar; 
     public Text textLoading; 
     public GameObject generalButton;
+    [Header("Input Settings")]
+    [SerializeField] private int sceneIdToLoad = 1;
 
     [Header("Локализованные строки")]
     [Tooltip("Press to Play")]
@@ -22,6 +25,27 @@ public class LoadingScene : MonoBehaviour
     private Animator loadingCircleAnimator;
     private Animator textAnimator;
     private bool isLoading = false;
+    private InputAction pressToStartAction;
+
+    private void Awake()
+    {
+        pressToStartAction = new InputAction("PressToStart", InputActionType.Button);
+        pressToStartAction.AddBinding("<Keyboard>/enter");
+        pressToStartAction.AddBinding("<Keyboard>/numpadEnter");
+        pressToStartAction.AddBinding("<Keyboard>/space");
+        pressToStartAction.AddBinding("<Gamepad>/buttonSouth");
+        pressToStartAction.AddBinding("<Gamepad>/start");
+    }
+
+    private void OnEnable()
+    {
+        pressToStartAction?.Enable();
+    }
+
+    private void OnDisable()
+    {
+        pressToStartAction?.Disable();
+    }
 
     private void Start()
     {
@@ -42,13 +66,37 @@ public class LoadingScene : MonoBehaviour
         if (generalButton != null)
         {
             generalButton.SetActive(true);
+            StartCoroutine(FocusGeneralButtonDelayed());
         }
+    }
+
+    private void Update()
+    {
+        if (isLoading || pressToStartAction == null || !pressToStartAction.WasPressedThisFrame())
+        {
+            return;
+        }
+
+        if (generalButton == null || !generalButton.activeInHierarchy)
+        {
+            return;
+        }
+
+        LoadScene(sceneIdToLoad);
     }
 
     private void UpdatePressToPlayText(string localizedValue)
     {
         if (textLoading != null)
             textLoading.text = localizedValue;
+    }
+
+    private void OnDestroy()
+    {
+        pressToPlayText.StringChanged -= UpdatePressToPlayText;
+        loadingText.StringChanged -= UpdateLoadingText;
+        pressToStartAction?.Dispose();
+        pressToStartAction = null;
     }
 
     // Этот метод должен быть привязан к кнопке из загрузочной сцены
@@ -61,6 +109,8 @@ public class LoadingScene : MonoBehaviour
                 loadingCircleBar.gameObject.SetActive(true);
             if (generalButton != null)
                 generalButton.SetActive(false);
+            if (EventSystem.current != null)
+                EventSystem.current.SetSelectedGameObject(null);
 
             if (loadingCircleAnimator != null)
             {
@@ -109,11 +159,40 @@ public class LoadingScene : MonoBehaviour
             }
             yield return null;
         }
+
+        loadingText.StringChanged -= UpdateLoadingText;
     }
 
     private void UpdateLoadingText(string localizedValue)
     {
         if (textLoading != null)
             textLoading.text = localizedValue;
+    }
+
+    private void FocusGeneralButton()
+    {
+        if (EventSystem.current == null || generalButton == null || !generalButton.activeInHierarchy)
+        {
+            return;
+        }
+
+        var selectable = generalButton.GetComponent<Selectable>();
+        if (selectable != null && selectable.interactable)
+        {
+            EventSystem.current.SetSelectedGameObject(selectable.gameObject);
+            return;
+        }
+
+        var button = generalButton.GetComponentInChildren<Button>(true);
+        if (button != null && button.interactable)
+        {
+            EventSystem.current.SetSelectedGameObject(button.gameObject);
+        }
+    }
+
+    private IEnumerator FocusGeneralButtonDelayed()
+    {
+        yield return null;
+        FocusGeneralButton();
     }
 }

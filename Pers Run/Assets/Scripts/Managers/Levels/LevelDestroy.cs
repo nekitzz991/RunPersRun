@@ -2,8 +2,11 @@ using UnityEngine;
 
 public class LevelDestroy : MonoBehaviour
 {
+    [SerializeField] private float despawnDistanceBehindPlayer = 100f;
+
     private PersRunner player;
     private LevelPartPool levelPartPool;
+    private bool isInitialized;
 
     private void Start()
     {
@@ -12,6 +15,8 @@ public class LevelDestroy : MonoBehaviour
         if (player == null)
         {
             Debug.LogError("Компонент PersRunner не найден на сцене!");
+            enabled = false;
+            return;
         }
 
         // Поиск менеджера пула
@@ -19,7 +24,11 @@ public class LevelDestroy : MonoBehaviour
         if (levelPartPool == null)
         {
             Debug.LogError("LevelPartPool не найден на сцене!");
+            enabled = false;
+            return;
         }
+
+        isInitialized = true;
     }
 
     private void Update()
@@ -30,7 +39,12 @@ public class LevelDestroy : MonoBehaviour
     // Если объект находится слишком далеко позади игрока – возвращаем его в пул
     private void CheckAndReturnToPool()
     {
-        if (transform.position.x < player.transform.position.x - 100)
+        if (!isInitialized || player == null || levelPartPool == null)
+        {
+            return;
+        }
+
+        if (transform.position.x < player.transform.position.x - despawnDistanceBehindPlayer)
         {
             LevelPart levelPart = GetComponent<LevelPart>();
             if (levelPart != null && levelPartPool != null)

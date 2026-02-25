@@ -1,5 +1,7 @@
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Localization;
@@ -17,8 +19,22 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+
         Instance = this;
-        DontDestroyOnLoad(gameObject); // Объект сохраняется между сценами
+
+        pauseAction = new InputAction("Pause", InputActionType.Button);
+        pauseAction.AddBinding("<Keyboard>/escape");
+        pauseAction.AddBinding("<Gamepad>/start");
+    }
+
+    private void OnEnable()
+    {
+        pauseAction?.Enable();
+    }
+
+    private void OnDisable()
+    {
+        pauseAction?.Disable();
     }
     #endregion
 
@@ -67,107 +83,154 @@ public class GameManager : MonoBehaviour
     [Header("Аниматоры окон (с контроллером состояний Hidden, Show, Hide)")]
     [SerializeField] private Animator pauseAnimator;
     [SerializeField] private Animator gameOverAnimator;
+    [SerializeField] private Selectable pauseFirstSelectable;
+    [SerializeField] private Selectable gameOverFirstSelectable;
     #endregion
 
     #region Приватные поля
-    private int score;
-    private bool isGameOver = false;
-    private bool isPaused = false;
-    private int availableHearts = 0;
-    private int nextHeartThreshold;
-    private int reviveCount = 0;
+    private bool isGameOver;
+    private bool isPaused;
+    private RunStatsService statsService;
+    private InputAction pauseAction;
+
     public event Action<int> OnScoreChanged;
+
     [SerializeField] private PersRunner playerInstance;
     private float gameStartX;
     private float currentDistance;
     private float bestDistance;
-    private int bestScore;
 
-    // Сохранённая начальная позиция игрока (fallback, если чекпоинт не установлен)
     private Vector3 startPosition;
-
-    // Сохранённая позиция чекпоинта и флаг его наличия
     private Vector3 lastCheckpointPosition;
-    private bool hasCheckpoint = false;
+    private bool hasCheckpoint;
     #endregion
 
     #region Инициализация
     private void Start()
     {
-        OnScoreChanged += UpdateScoreUI;
+        InitializeGameplayState();
+        InitializeStats();
+        InitializeUI();
+
         AudioManager.Instance?.PlayMusic();
-
-        Score = 0;
-        availableHearts = 0;
-        nextHeartThreshold = pointsForExtraHeart;
-        UpdateHeartUI();
-
-        // Скрываем панели по умолчанию
-        gameOverPanel?.SetActive(false);
-        pauseMenu?.SetActive(false);
-        gameplayUI?.SetActive(true);
-
-        if (playerInstance == null)
-            playerInstance = FindFirstObjectByType<PersRunner>();
-        if (playerInstance != null)
-        {
-            startPosition = playerInstance.transform.position; // Сохраняем начальную позицию
-            gameStartX = playerInstance.transform.position.x;
-        }
-
-        currentDistance = 0f;
-        // Загружаем сохранённые лучшие показатели, если они есть
-        if (PlayerPrefs.HasKey(BEST_DISTANCE_KEY))
-            bestDistance = PlayerPrefs.GetFloat(BEST_DISTANCE_KEY);
-        if (PlayerPrefs.HasKey(BEST_SCORE_KEY))
-            bestScore = PlayerPrefs.GetInt(BEST_SCORE_KEY);
-        UpdateDistanceUI();
-
-        // Периодически сохраняем данные (каждые 5 секунд) – это поможет сохранить прогресс при обновлении страницы
-        InvokeRepeating("SaveProgress", 5f, 5f);
+        InvokeRepeating(nameof(SaveProgress), 5f, 5f);
+        WebGLBeforeUnloadBridge.Register(this, nameof(OnBeforeUnload));
     }
 
     private void OnDestroy()
     {
-        OnScoreChanged -= UpdateScoreUI;
+        if (statsService != null)
+        {
+            statsService.ScoreChanged -= HandleScoreChanged;
+        }
+
+        CancelInvoke(nameof(SaveProgress));
+        pauseAction?.Dispose();
+        pauseAction = null;
+
+        if (Instance == this)
+        {
+            Instance = null;
+        }
+    }
+
+    private void InitializeGameplayState()
+    {
+        if (playerInstance == null)
+        {
+            playerInstance = FindFirstObjectByType<PersRunner>();
+        }
+
+        if (playerInstance != null)
+        {
+            startPosition = playerInstance.transform.position;
+            gameStartX = playerInstance.transform.position.x;
+        }
+        else
+        {
+            Debug.LogWarning("GameManager: PersRunner не найден на сцене.");
+        }
+
+        isGameOver = false;
+        isPaused = false;
+        hasCheckpoint = false;
+        currentDistance = 0f;
+        bestDistance = SaveService.GetFloat(BEST_DISTANCE_KEY, 0f);
+    }
+
+    private void InitializeStats()
+    {
+        int storedBestScore = SaveService.GetInt(BEST_SCORE_KEY, 0);
+        statsService = new RunStatsService(pointsForExtraHeart, maxReviveCost, storedBestScore);
+        statsService.ScoreChanged += HandleScoreChanged;
+        statsService.ResetSession();
+        UpdateHeartUI();
+    }
+
+    private void InitializeUI()
+    {
+        gameOverPanel?.SetActive(false);
+        pauseMenu?.SetActive(false);
+        gameplayUI?.SetActive(true);
+        UpdateDistanceUI();
     }
     #endregion
 
     #region Update методы
     private void Update()
     {
-        if (!isGameOver && playerInstance != null)
+        if (pauseAction != null && pauseAction.WasPressedThisFrame())
         {
-            float newDistance = playerInstance.transform.position.x - gameStartX;
-            if (newDistance > currentDistance)
-            {
-                currentDistance = newDistance;
-                UpdateDistanceUI();
-            }
+            TogglePause();
+        }
+
+        if (isGameOver || playerInstance == null)
+        {
+            return;
+        }
+
+        float newDistance = playerInstance.transform.position.x - gameStartX;
+        if (newDistance > currentDistance)
+        {
+            currentDistance = newDistance;
+            UpdateDistanceUI();
         }
     }
 
     private void OnApplicationFocus(bool hasFocus)
     {
         if (!hasFocus)
-            PlayerPrefs.Save();
+        {
+            SaveService.SaveNow();
+        }
     }
 
     private void OnApplicationPause(bool pauseStatus)
     {
         if (pauseStatus)
-            PlayerPrefs.Save();
+        {
+            SaveService.SaveNow();
+        }
     }
     #endregion
 
     #region Обновление UI
+    private void HandleScoreChanged(int newScore)
+    {
+        UpdateScoreUI(newScore);
+        UpdateHeartUI();
+        OnScoreChanged?.Invoke(newScore);
+    }
+
     private void UpdateLocalizedText(LocalizeStringEvent localizeEvent, object value)
     {
-        if (localizeEvent != null)
+        if (localizeEvent == null)
         {
-            localizeEvent.StringReference.Arguments = new object[] { value };
-            localizeEvent.RefreshString();
+            return;
         }
+
+        localizeEvent.StringReference.Arguments = new object[] { value };
+        localizeEvent.RefreshString();
     }
 
     private void UpdateDistanceUI()
@@ -175,120 +238,149 @@ public class GameManager : MonoBehaviour
         int currentDistanceMeters = Mathf.RoundToInt(currentDistance);
         int bestDistanceMeters = Mathf.RoundToInt(bestDistance);
 
+        if (currentDistanceTextUI != null)
+        {
+            currentDistanceTextUI.text = $"{currentDistanceMeters} m";
+        }
+        if (bestDistanceTextUI != null)
+        {
+            bestDistanceTextUI.text = $"{bestDistanceMeters} m";
+        }
+
         UpdateLocalizedText(currentDistanceLocalizeEvent, currentDistanceMeters);
         UpdateLocalizedText(bestDistanceLocalizeEvent, bestDistanceMeters);
 
-        // Если достигнута новая лучшая дистанция, обновляем и сохраняем
         if (currentDistance > bestDistance)
         {
             bestDistance = currentDistance;
-            PlayerPrefs.SetFloat(BEST_DISTANCE_KEY, bestDistance);
+            SaveService.SetFloat(BEST_DISTANCE_KEY, bestDistance);
         }
     }
 
     private void UpdateScoreUI(int newScore)
     {
-        if (scoreText != null)
+        if (scoreText == null)
+        {
+            return;
+        }
+
+        if (scoreFormat != null)
         {
             scoreFormat.Arguments = new object[] { newScore };
             scoreText.text = scoreFormat.GetLocalizedString();
+            return;
         }
+
+        scoreText.text = newScore.ToString();
     }
 
     private void UpdateHeartUI()
     {
-        if (availableHearts <= 0)
+        int hearts = statsService == null ? 0 : statsService.AvailableHearts;
+
+        if (hearts <= 0)
         {
             if (heartIcon != null)
+            {
                 heartIcon.sprite = emptyHeartSprite;
+            }
             if (heartCountText != null)
-                heartCountText.text = "";
+            {
+                heartCountText.text = string.Empty;
+            }
+            return;
         }
-        else
+
+        if (heartIcon != null)
         {
-            if (heartIcon != null)
-                heartIcon.sprite = fullHeartSprite;
-            if (heartCountText != null)
-                heartCountText.text = availableHearts > 1 ? $"x{availableHearts}" : "";
+            heartIcon.sprite = fullHeartSprite;
+        }
+        if (heartCountText != null)
+        {
+            heartCountText.text = hearts > 1 ? $"x{hearts}" : string.Empty;
         }
     }
     #endregion
 
     #region Управление очками и сердцами
-    public int Score
-    {
-        get => score;
-        private set
-        {
-            score = value;
-            OnScoreChanged?.Invoke(score);
-            while (score >= nextHeartThreshold)
-            {
-                availableHearts++;
-                nextHeartThreshold += pointsForExtraHeart;
-            }
-            UpdateHeartUI();
-
-            // Если достигнут новый лучший счёт, обновляем и сохраняем
-            if (score > bestScore)
-            {
-                bestScore = score;
-                PlayerPrefs.SetInt(BEST_SCORE_KEY, bestScore);
-            }
-        }
-    }
+    public int Score => statsService == null ? 0 : statsService.Score;
 
     public void AddScore(int amount)
     {
-        if (!isGameOver)
-            Score += amount;
+        if (isGameOver || statsService == null)
+        {
+            return;
+        }
+
+        int previousBestScore = statsService.BestScore;
+        statsService.AddScore(amount);
+
+        if (statsService.BestScore > previousBestScore)
+        {
+            SaveService.SetInt(BEST_SCORE_KEY, statsService.BestScore);
+        }
     }
     #endregion
 
     #region Игровой процесс
     public void GameOver()
     {
+        if (isGameOver)
+        {
+            return;
+        }
+
         isGameOver = true;
         gameplayUI?.SetActive(false);
+
         if (playerInstance != null)
         {
             playerInstance.enabled = false;
-            Rigidbody2D rb = playerInstance.GetComponent<Rigidbody2D>();
+            var rb = playerInstance.GetComponent<Rigidbody2D>();
             if (rb != null)
+            {
                 rb.simulated = false;
+            }
         }
 
         if (currentScoreText != null)
-            currentScoreText.text = score.ToString();
+        {
+            currentScoreText.text = Score.ToString();
+        }
 
-        if (bestScoreTextUI != null)
-            bestScoreTextUI.text = bestScore.ToString();
+        if (bestScoreTextUI != null && statsService != null)
+        {
+            bestScoreTextUI.text = statsService.BestScore.ToString();
+        }
 
         if (gameOverDistanceTextUI != null)
         {
-            int currentDistanceMeters = Mathf.RoundToInt(currentDistance);
-            gameOverDistanceTextUI.text = $"{currentDistanceMeters} m";
+            gameOverDistanceTextUI.text = $"{Mathf.RoundToInt(currentDistance)} m";
         }
+
         if (bestDistanceGameOverTextUI != null)
         {
-            int bestDistanceMeters = Mathf.RoundToInt(bestDistance);
-            bestDistanceGameOverTextUI.text = $"{bestDistanceMeters} m";
+            bestDistanceGameOverTextUI.text = $"{Mathf.RoundToInt(bestDistance)} m";
         }
 
         int currentReviveCost = GetCurrentReviveCost();
         if (reviveCostText != null)
+        {
             reviveCostText.text = currentReviveCost.ToString();
-        UpdateReviveButtonColor(availableHearts >= currentReviveCost);
+        }
 
-        if (heartsCountGameOverText != null)
-            heartsCountGameOverText.text = availableHearts.ToString();
+        if (heartsCountGameOverText != null && statsService != null)
+        {
+            heartsCountGameOverText.text = statsService.AvailableHearts.ToString();
+        }
+
+        UpdateReviveButtonColor(statsService != null && statsService.AvailableHearts >= currentReviveCost);
 
         ShowGameOverPanel();
         AudioManager.Instance?.StopMusic();
         AudioManager.Instance?.PlayGameOverMusic();
 
-        // Сохраняем сразу перед выходом из игры
-        PlayerPrefs.Save();
+        SaveService.SaveNow();
     }
 
     public void RestartGame()
@@ -299,6 +391,7 @@ public class GameManager : MonoBehaviour
 
     public void ExitGame()
     {
+        SaveService.SaveNow();
         Time.timeScale = 1f;
         MenuManager.ResetGameStart();
         SceneManager.LoadScene("LoadingScene");
@@ -308,6 +401,17 @@ public class GameManager : MonoBehaviour
     #region Управление паузой
     public void TogglePause()
     {
+        if (isGameOver)
+        {
+            return;
+        }
+
+        // Если игра уже остановлена другим потоком (например, стартовым меню), не открываем паузу.
+        if (!isPaused && Time.timeScale <= 0f)
+        {
+            return;
+        }
+
         isPaused = !isPaused;
 
         if (isPaused)
@@ -345,6 +449,11 @@ public class GameManager : MonoBehaviour
     #region Логика возрождения и контрольных точек
     private void UpdateReviveButtonColor(bool hasEnoughHearts)
     {
+        if (reviveButton == null)
+        {
+            return;
+        }
+
         ColorBlock cb = reviveButton.colors;
         float alpha = hasEnoughHearts ? 1f : 100f / 255f;
 
@@ -359,37 +468,53 @@ public class GameManager : MonoBehaviour
 
     public void Revive()
     {
-        int currentReviveCost = GetCurrentReviveCost();
-        if (availableHearts >= currentReviveCost)
+        if (statsService == null)
+        {
+            return;
+        }
+
+        if (statsService.TrySpendHeartsForRevive())
         {
             UpdateReviveButtonColor(true);
-            availableHearts -= currentReviveCost;
-            reviveCount++;
             HideGameOverPanel();
             gameplayUI?.SetActive(true);
             isGameOver = false;
+
             if (playerInstance != null)
             {
                 playerInstance.enabled = true;
-                Rigidbody2D rb = playerInstance.GetComponent<Rigidbody2D>();
+                var rb = playerInstance.GetComponent<Rigidbody2D>();
                 if (rb != null)
+                {
                     rb.simulated = true;
+                }
             }
+
             AudioManager.Instance?.StopGameOverMusic();
             AudioManager.Instance?.PlayMusic();
             RevivePlayer();
             UpdateHeartUI();
+
+            if (heartsCountGameOverText != null)
+            {
+                heartsCountGameOverText.text = statsService.AvailableHearts.ToString();
+            }
+            if (reviveCostText != null)
+            {
+                reviveCostText.text = GetCurrentReviveCost().ToString();
+            }
+
+            SaveService.SaveNow();
+            return;
         }
-        else
-        {
-            UpdateReviveButtonColor(false);
-            ShowAdForHeart();
-        }
+
+        UpdateReviveButtonColor(false);
+        ShowAdForHeart();
     }
 
     private int GetCurrentReviveCost()
     {
-        return Mathf.Min(reviveCount + 1, maxReviveCost);
+        return statsService == null ? 1 : statsService.GetCurrentReviveCost();
     }
 
     private Vector3 GetRespawnPosition()
@@ -403,7 +528,9 @@ public class GameManager : MonoBehaviour
         {
             playerInstance = FindFirstObjectByType<PersRunner>();
             if (playerInstance == null)
+            {
                 return;
+            }
         }
 
         playerInstance.transform.position = GetRespawnPosition();
@@ -418,6 +545,11 @@ public class GameManager : MonoBehaviour
 
     public void SetCheckpoint(Transform checkpoint)
     {
+        if (checkpoint == null)
+        {
+            return;
+        }
+
         lastCheckpointPosition = checkpoint.position;
         hasCheckpoint = true;
         Debug.Log("Контрольная точка обновлена: " + lastCheckpointPosition);
@@ -427,72 +559,120 @@ public class GameManager : MonoBehaviour
     #region Анимация окон
     public void ShowPauseMenu()
     {
-        if (pauseMenu != null)
+        if (pauseMenu == null)
         {
-            pauseMenu.SetActive(true);
-            if (pauseAnimator != null)
-            {
-                pauseAnimator.ResetTrigger("Hide");
-                pauseAnimator.SetTrigger("Show");
-            }
+            return;
         }
+
+        pauseMenu.SetActive(true);
+        if (pauseAnimator != null)
+        {
+            pauseAnimator.ResetTrigger("Hide");
+            pauseAnimator.SetTrigger("Show");
+        }
+
+        FocusFirstSelectable(pauseMenu, pauseFirstSelectable);
     }
 
     public void HidePauseMenu()
     {
-        if (pauseAnimator != null)
+        if (pauseAnimator == null)
         {
-            pauseAnimator.ResetTrigger("Show");
-            pauseAnimator.SetTrigger("Hide");
+            if (pauseMenu != null)
+            {
+                pauseMenu.SetActive(false);
+            }
+            return;
         }
+
+        pauseAnimator.ResetTrigger("Show");
+        pauseAnimator.SetTrigger("Hide");
     }
 
     public void OnPauseHideAnimationEnd()
     {
         if (pauseMenu != null)
+        {
             pauseMenu.SetActive(false);
+        }
     }
 
     public void ShowGameOverPanel()
     {
-        if (gameOverPanel != null)
+        if (gameOverPanel == null)
         {
-            gameOverPanel.SetActive(true);
-            if (gameOverAnimator != null)
-            {
-                gameOverAnimator.ResetTrigger("Hide");
-                gameOverAnimator.SetTrigger("Show");
-            }
+            return;
         }
+
+        gameOverPanel.SetActive(true);
+        if (gameOverAnimator != null)
+        {
+            gameOverAnimator.ResetTrigger("Hide");
+            gameOverAnimator.SetTrigger("Show");
+        }
+
+        FocusFirstSelectable(gameOverPanel, gameOverFirstSelectable != null ? gameOverFirstSelectable : reviveButton);
     }
 
     public void HideGameOverPanel()
     {
-        if (gameOverAnimator != null)
+        if (gameOverAnimator == null)
         {
-            gameOverAnimator.ResetTrigger("Show");
-            gameOverAnimator.SetTrigger("Hide");
+            if (gameOverPanel != null)
+            {
+                gameOverPanel.SetActive(false);
+            }
+            return;
         }
+
+        gameOverAnimator.ResetTrigger("Show");
+        gameOverAnimator.SetTrigger("Hide");
     }
 
     public void OnGameOverHideAnimationEnd()
     {
         if (gameOverPanel != null)
+        {
             gameOverPanel.SetActive(false);
+        }
     }
     #endregion
 
     #region Дополнительные методы
-    // Периодически сохраняем данные (вызывается каждые 5 секунд)
     private void SaveProgress()
     {
-        PlayerPrefs.Save();
+        SaveService.SaveIfDirty(1f);
     }
 
-    // Этот метод можно вызвать из JavaScript (например, через событие onbeforeunload)
     public void OnBeforeUnload()
     {
-        PlayerPrefs.Save();
+        SaveService.SaveNow();
+    }
+
+    private void FocusFirstSelectable(GameObject root, Selectable preferred = null)
+    {
+        if (EventSystem.current == null || root == null || !root.activeInHierarchy)
+        {
+            return;
+        }
+
+        if (preferred != null && preferred.gameObject.activeInHierarchy && preferred.interactable)
+        {
+            EventSystem.current.SetSelectedGameObject(preferred.gameObject);
+            return;
+        }
+
+        var selectables = root.GetComponentsInChildren<Selectable>(true);
+        for (int i = 0; i < selectables.Length; i++)
+        {
+            if (!selectables[i].interactable || !selectables[i].gameObject.activeInHierarchy)
+            {
+                continue;
+            }
+
+            EventSystem.current.SetSelectedGameObject(selectables[i].gameObject);
+            return;
+        }
     }
     #endregion
 }

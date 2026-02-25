@@ -19,18 +19,24 @@ public class LevelGenerator : MonoBehaviour
     // Переменные для перемешанного списка
     private List<Transform> shuffledPrefabs;
     private int currentIndex = 0;
+    private bool isInitialized;
+    private WaitForSeconds spawnCheckDelay;
+
+    private const string EndPointName = "EndPoint";
 
     private void Awake()
     {
         if (startZone == null)
         {
             Debug.LogError("StartZone не задана в инспекторе!");
+            enabled = false;
             return;
         }
 
         if (levelPartPrefabs == null || levelPartPrefabs.Count == 0)
         {
             Debug.LogError("Список префабов частей уровня пуст!");
+            enabled = false;
             return;
         }
 
@@ -38,13 +44,15 @@ public class LevelGenerator : MonoBehaviour
         if (player == null)
         {
             Debug.LogError("Компонент PersRunner не найден на сцене!");
+            enabled = false;
             return;
         }
 
-        Transform endPoint = startZone.Find("EndPoint");
+        Transform endPoint = startZone.Find(EndPointName);
         if (endPoint == null)
         {
-            Debug.LogError("В StartZone не найден объект с именем 'EndPoint'!");
+            Debug.LogError($"В StartZone не найден объект с именем '{EndPointName}'!");
+            enabled = false;
             return;
         }
         lastEndPosition = endPoint.position;
@@ -53,9 +61,12 @@ public class LevelGenerator : MonoBehaviour
         if (levelPartPool == null)
         {
             Debug.LogError("LevelPartPool не найден на сцене!");
+            enabled = false;
             return;
         }
-        
+
+        spawnCheckDelay = new WaitForSeconds(0.2f);
+
         // Инициализация перемешанного списка до спавна стартовых частей
         ShufflePrefabs();
 
@@ -64,10 +75,16 @@ public class LevelGenerator : MonoBehaviour
         {
             SpawnLevelPart();
         }
+
+        isInitialized = true;
     }
 
     private void Start()
     {
+        if (!isInitialized)
+        {
+            return;
+        }
         StartCoroutine(CheckSpawnCondition());
     }
 
@@ -75,11 +92,14 @@ public class LevelGenerator : MonoBehaviour
     {
         while (true)
         {
-            if (Vector3.Distance(player.transform.position, lastEndPosition) < playerDistanceSpawnLevelPart)
+            if (player != null)
             {
-                SpawnLevelPart();
+                while (player.transform.position.x + playerDistanceSpawnLevelPart > lastEndPosition.x)
+                {
+                    SpawnLevelPart();
+                }
             }
-            yield return new WaitForSeconds(0.2f);
+            yield return spawnCheckDelay;
         }
     }
 
@@ -99,6 +119,11 @@ public class LevelGenerator : MonoBehaviour
 
     private void SpawnLevelPart()
     {
+        if (shuffledPrefabs == null || shuffledPrefabs.Count == 0 || levelPartPool == null)
+        {
+            return;
+        }
+
         // Если все зоны использованы, перемешиваем список заново
         if (currentIndex >= shuffledPrefabs.Count)
         {
@@ -112,14 +137,14 @@ public class LevelGenerator : MonoBehaviour
         Transform newLevelPart = levelPartPool.GetLevelPart(chosenLevelPart, lastEndPosition, Quaternion.identity);
 
         // Находим дочерний объект "EndPoint" для обновления позиции конца уровня
-        Transform newEndPoint = newLevelPart.Find("EndPoint");
+        Transform newEndPoint = newLevelPart.Find(EndPointName);
         if (newEndPoint != null)
         {
             lastEndPosition = newEndPoint.position;
         }
         else
         {
-            Debug.LogWarning("В сгенерированной части уровня не найден 'EndPoint'!");
+            Debug.LogWarning($"В сгенерированной части уровня не найден '{EndPointName}'!");
         }
     }
 }

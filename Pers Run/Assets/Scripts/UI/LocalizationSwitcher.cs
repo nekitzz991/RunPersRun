@@ -32,7 +32,7 @@ public class LocalizationSwitcher : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    private void Start()
+    private IEnumerator Start()
     {
         // Если кнопка уже назначена (например, если объект создан в первой сцене с UI),
         // подписываемся на её событие
@@ -41,14 +41,24 @@ public class LocalizationSwitcher : MonoBehaviour
             languageButton.onClick.AddListener(ToggleLanguage);
         }
 
+        yield return LocalizationSettings.InitializationOperation;
+
         // Если сохранён язык, устанавливаем его
-        if (PlayerPrefs.HasKey(selectedLanguageKey))
+        if (SaveService.HasKey(selectedLanguageKey))
         {
-            string savedLanguage = PlayerPrefs.GetString(selectedLanguageKey);
+            string savedLanguage = SaveService.GetString(selectedLanguageKey);
             SetLanguageByCode(savedLanguage);
         }
 
         UpdateFlagIcon();
+    }
+
+    private void OnDestroy()
+    {
+        if (languageButton != null)
+        {
+            languageButton.onClick.RemoveListener(ToggleLanguage);
+        }
     }
 
     /// <summary>
@@ -95,8 +105,7 @@ public class LocalizationSwitcher : MonoBehaviour
         LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[newLocaleIndex];
 
         // Сохраняем выбранный язык
-        PlayerPrefs.SetString(selectedLanguageKey, LocalizationSettings.SelectedLocale.Identifier.Code);
-        PlayerPrefs.Save();
+        SaveService.SetString(selectedLanguageKey, LocalizationSettings.SelectedLocale.Identifier.Code, true);
 
         UpdateFlagIcon();
         isSwitchingLanguage = false;
@@ -106,6 +115,11 @@ public class LocalizationSwitcher : MonoBehaviour
     {
         if (flagIcon == null)
             return;
+
+        if (LocalizationSettings.SelectedLocale == null)
+        {
+            return;
+        }
 
         string currentLocaleCode = LocalizationSettings.SelectedLocale.Identifier.Code;
         Debug.Log("Current Locale Code: " + currentLocaleCode);

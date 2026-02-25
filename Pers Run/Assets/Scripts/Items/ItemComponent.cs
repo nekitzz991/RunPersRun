@@ -11,15 +11,28 @@ public class ItemComponent : MonoBehaviour
     [SerializeField] private PoopType poopVariant;
     
     [SerializeField] private AudioClip pickupSound;
+    [SerializeField] private bool deactivateOnCollect = true;
 
     private int scoreValue;
+    private bool isCollected;
+    private Collider2D cachedCollider;
     
     public ItemType Type => itemType;
     public int ScoreValue => scoreValue;
     
     private void Awake()
     {
+        cachedCollider = GetComponent<Collider2D>();
         SetScoreValue();
+    }
+
+    private void OnEnable()
+    {
+        isCollected = false;
+        if (cachedCollider != null)
+        {
+            cachedCollider.enabled = true;
+        }
     }
     
     private void SetScoreValue()
@@ -38,8 +51,29 @@ public class ItemComponent : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            AudioManager.Instance.PlaySFXSound(pickupSound,4f);
-            
+            TryCollect();
+        }
+    }
+
+    public void TryCollect()
+    {
+        if (isCollected)
+        {
+            return;
+        }
+
+        isCollected = true;
+        if (cachedCollider != null)
+        {
+            cachedCollider.enabled = false;
+        }
+
+        GameManager.Instance?.AddScore(scoreValue);
+        AudioManager.Instance?.PlaySFXSound(pickupSound, 1f);
+
+        if (deactivateOnCollect)
+        {
+            gameObject.SetActive(false);
         }
     }
 }
